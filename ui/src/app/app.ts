@@ -57,9 +57,9 @@ export class App implements OnInit {
     ).subscribe((event: any) => {
       const url: string = event.urlAfterRedirects || event.url || '';
       if (url.startsWith('/admin') || url.startsWith('/settings')) {
-        document.title = 'HouseSync Admin';
+        document.title = 'HouseMate Admin';
       } else if (url === '/' || url.startsWith('/landing')) {
-        document.title = 'HouseSync';
+        document.title = 'HouseMate';
       }
     });
 

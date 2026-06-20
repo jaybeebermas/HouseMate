@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService, User } from '../../services/auth/auth.service';
@@ -13,6 +13,8 @@ import { AuthService, User } from '../../services/auth/auth.service';
 export class LandingComponent {
   public readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+
+  public readonly showDropdown = signal(false);
 
   public readonly featuredListings = [
     {
@@ -100,12 +102,17 @@ export class LandingComponent {
     }
   }
 
-  goToDashboard(): void {
-    this.router.navigate(['/admin/dashboard']);
+  toggleDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showDropdown.update(v => !v);
+  }
+
+  @HostListener('document:click')
+  closeDropdown(): void {
+    this.showDropdown.set(false);
   }
 
   logout(): void {
     this.authService.logout().subscribe();
   }
 }
-
