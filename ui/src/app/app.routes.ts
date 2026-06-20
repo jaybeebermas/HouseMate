@@ -10,6 +10,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: adminRoutes
   },
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  {
+    path: 'landing',
+    loadComponent: () => import('./features/landing/landing.component').then(m => m.LandingComponent)
+  },
+  {
+    path: '',
+    loadComponent: () => import('./features/landing/landing.component').then(m => m.LandingComponent),
+    pathMatch: 'full'
+  },
   { path: '**', redirectTo: 'login' }
 ];

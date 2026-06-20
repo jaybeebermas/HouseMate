@@ -1,4 +1,4 @@
-import { Component, signal, ViewChild, ElementRef, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, signal, ViewChild, ElementRef, AfterViewInit, OnDestroy, HostListener, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
@@ -111,8 +111,21 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/admin/dashboard']);
+    const user = this.authService.currentUser();
+    if (user) {
+      this.redirectUser(user);
+    } else if (this.authService.isAuthenticated()) {
+      effect(() => {
+        const u = this.authService.currentUser();
+        if (u) {
+          this.redirectUser(u);
+        }
+      });
+    }
+
+    const mode = this.route.snapshot.queryParams['mode'];
+    if (mode === 'signup') {
+      this.isSignUp.set(true);
     }
     this.loginForm = this.fb.group({
       username: ['', [Validators.required]],
@@ -276,8 +289,7 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
 
         const data = res.data?.loginWithGoogle;
         if (data && data.status === 'SUCCESS') {
-          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin/dashboard';
-          this.router.navigateByUrl(returnUrl);
+          this.redirectUser(data.user);
         } else {
           this.errorMessage.set(data?.message || 'Google login failed.');
         }
@@ -288,6 +300,16 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
         this.isLoading.set(false);
       }
     });
+  }
+
+  private redirectUser(user: any): void {
+    const isAdmin = user && (user.role === 'admin' || user.role === 'superadmin' || user.role === 'super_admin');
+    if (isAdmin) {
+      const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin/dashboard';
+      this.router.navigateByUrl(returnUrl);
+    } else {
+      this.router.navigate(['/landing']);
+    }
   }
 
   togglePassword(): void {
@@ -322,8 +344,7 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
     this.authService.login(username, password).subscribe({
       next: (response) => {
         if (response.data?.login?.status === 'SUCCESS') {
-          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin/dashboard';
-          this.router.navigateByUrl(returnUrl);
+          this.redirectUser(response.data.login.user);
         } else {
           this.errorMessage.set(response.data?.login?.message || 'Login failed.');
         }
@@ -350,8 +371,7 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
     this.authService.register({ username, first_name, last_name, email, password }).subscribe({
       next: (response) => {
         if (response.data?.register?.status === 'SUCCESS') {
-          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin/dashboard';
-          this.router.navigateByUrl(returnUrl);
+          this.redirectUser(response.data.register.user);
         } else {
           this.errorMessage.set(response.data?.register?.message || 'Registration failed.');
         }
