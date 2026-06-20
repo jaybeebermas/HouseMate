@@ -1,0 +1,3 @@
+createUser(input: CreateUserInput!): User! @guard @can(ability: "user.create") @field(resolver: "App\\GraphQL\\Mutations\\User\\CreateUser")
+updateUser(input: UpdateUserInput!): User! @guard @can(ability: "user.edit") @field(resolver: "App\\GraphQL\\Mutations\\User\\UpdateUser")
+deleteUser(id: ID!): Boolean! @guard @can(ability: "user.delete", model: "App\\Models\\User") @field(resolver: "App\\GraphQL\\Mutations\\User\\DeleteUser")

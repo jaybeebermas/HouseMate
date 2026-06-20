@@ -1,0 +1,7 @@
+type Query {
+  _empty: String @mock
+}
+
+type Mutation {
+  _empty: String @mock
+}

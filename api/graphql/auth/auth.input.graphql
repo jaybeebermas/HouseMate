@@ -1,0 +1,12 @@
+input LoginInput {
+  username: String!
+  password: String!
+}
+
+input RegisterInput {
+  username: String!
+  first_name: String!
+  last_name: String!
+  email: String!
+  password: String!
+}

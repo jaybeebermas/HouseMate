@@ -1,0 +1,25 @@
+/* Custom slim scrollbars for options scroll */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #e4e4e7;
+  border-radius: 9999px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #d4d4d8;
+}
+
+/* Select active state visual response */
+.select-item:active {
+  background-color: #f4f4f5;
+}
+
+/* Override overly round input-field radius inside select trigger */
+:host .input-field {
+  border-radius: 8px;
+}

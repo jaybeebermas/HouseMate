@@ -1,0 +1,7 @@
+type Permission {
+  id: ID!
+  name: String!
+  guard_name: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+}

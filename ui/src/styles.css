@@ -1,3 +1,198 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
 
-@import 'tailwindcss';
+@theme {
+  /* Colors */
+  --color-primary-50: #f0fdfa;
+  --color-primary-100: #ccfbf1;
+  --color-primary-200: #99f6e4;
+  --color-primary-300: #5eead4;
+  --color-primary-400: #2dd4bf;
+  --color-primary-500: #14b8a6;
+  --color-primary-600: #0d9488;
+  --color-primary-700: #0f766e;
+  --color-primary-800: #115e59;
+  --color-primary-900: #134e4a;
+
+  --color-accent-50: #fff7ed;
+  --color-accent-100: #ffedd5;
+  --color-accent-200: #fed7aa;
+  --color-accent-300: #fdba74;
+  --color-accent-400: #fb923c;
+  --color-accent-500: #f97316;
+  --color-accent-600: #ea580c;
+  --color-accent-700: #c2410c;
+  --color-accent-800: #9a3412;
+  --color-accent-900: #7c2d12;
+
+  --color-brand: var(--color-primary-600);
+  --color-brand-foreground: #ffffff;
+
+  /* Shadows */
+  --shadow-premium: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  --shadow-elevated: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Radii */
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+
+  /* Typography */
+  --font-sans: "Google Sans", "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Google Sans", "Sora", sans-serif;
+}
+
+/* Global Sizing Config */
+:root {
+  --base-font-size: 16px;
+}
+
+/* User-defined UI Scaling */
+:root[data-size="small"] { --base-font-size: 14px; }
+:root[data-size="medium"] { --base-font-size: 16px; }
+:root[data-size="large"] { --base-font-size: 18px; }
+:root[data-size="xl"] { --base-font-size: 20px; }
+
+/* Base resets and defaults */
+@layer base {
+  html {
+    font-size: var(--base-font-size);
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply h-full w-full bg-zinc-100 text-zinc-900;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight text-zinc-900;
+    font-family: var(--font-display);
+  }
+}
+
+/* Custom Components / Utilities */
+@layer components {
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-premium;
+  }
+  
+  .btn-primary {
+    @apply px-5 py-2.5 bg-brand text-white rounded-xl font-bold shadow-lg shadow-primary-600/20 hover:bg-primary-700 hover:shadow-primary-700/30 active:scale-95 transition-all flex items-center justify-center gap-2;
+    font-size: 1rem;
+  }
+
+  .btn-outline {
+    @apply px-5 py-2.5 bg-white border border-zinc-200 text-zinc-700 rounded-xl font-bold hover:bg-zinc-50 hover:border-zinc-300 active:scale-95 transition-all flex items-center justify-center gap-2;
+    font-size: 1rem;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-lg focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all placeholder:text-zinc-400;
+    font-size: 1rem;
+  }
+
+  .label-classic {
+    @apply block text-xs font-black text-zinc-500 uppercase tracking-widest mb-2;
+  }
+
+  .subtle-backdrop {
+    @apply bg-slate-950/5 backdrop-blur-[2px];
+  }
+}
+
+/* Animation utilities */
+@keyframes fade-in-up {
+  from { opacity: 0; margin-top: 10px; }
+  to { opacity: 1; margin-top: 0; }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s ease-out forwards;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+@keyframes slide-in-from-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.slide-in-from-right {
+  animation-name: slide-in-from-right;
+}
+
+.animate-in {
+  animation-duration: 300ms;
+  animation-fill-mode: forwards;
+  animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+
+.duration-300 {
+  animation-duration: 300ms;
+}
+
+.ease-out {
+  animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-zinc-200 rounded-full hover:bg-zinc-300 transition-colors;
+}
+
+/* ── MOBILE RESPONSIVE UTILITIES ── */
+
+/* Tables scroll horizontally on small screens */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure admin content doesn't overflow on mobile */
+@media (max-width: 640px) {
+  .btn-primary,
+  .btn-outline {
+    font-size: 0.875rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Reduce card padding on very small screens */
+  .card-mobile {
+    padding: 1rem !important;
+  }
+
+  /* Make horizontal overflows scrollable */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+}
+
+/* Safe-area insets for notched mobile devices */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .mobile-safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

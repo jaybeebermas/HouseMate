@@ -1,0 +1,14 @@
+permissions: [Permission!]!
+  @guard
+  @can(ability: "permission.view")
+  @field(resolver: "App\\GraphQL\\Queries\\Permission\\PermissionQuery@permissions")
+permission(id: ID! @eq): Permission
+  @guard
+  @can(ability: "permission.view")
+  @field(resolver: "App\\GraphQL\\Queries\\Permission\\PermissionQuery@permission")
+availablePermissions: [String!]!
+  @guard
+  @field(resolver: "App\\GraphQL\\Queries\\Permission\\PermissionQuery@availablePermissions")
+basePermissions: [String!]!
+  @guard
+  @field(resolver: "App\\GraphQL\\Queries\\Permission\\PermissionQuery@basePermissions")

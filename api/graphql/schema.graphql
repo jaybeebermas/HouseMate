@@ -1,0 +1,29 @@
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+#import base/root.graphql
+
+extend type Query {
+  #import auth/auth.query.graphql
+  #import permission/permission.query.graphql
+  #import role/role.query.graphql
+  #import navigation/navigation.query.graphql
+  #import user/user.query.graphql
+}
+
+extend type Mutation {
+  #import auth/auth.mutation.graphql
+  #import permission/permission.mutation.graphql
+  #import role/role.mutation.graphql
+  #import user/user.mutation.graphql
+}
+
+#import auth/auth.input.graphql
+#import permission/permission.input.graphql
+#import role/role.input.graphql
+#import user/user.input.graphql
+
+#import auth/auth.type.graphql
+#import permission/permission.type.graphql
+#import role/role.type.graphql
+#import navigation/navigation.type.graphql
+#import user/user.types.graphql

@@ -1,0 +1,11 @@
+type User {
+    id: ID!
+    username: String!
+    first_name: String!
+    last_name: String!
+    email: String!
+    role: String
+    permissions: [String!]! @rename(attribute: "permissions_list")
+    created_at: String
+    updated_at: String
+}

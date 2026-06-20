@@ -1,0 +1,12 @@
+createPermission(input: CreatePermissionInput!): Permission!
+  @guard
+  @can(ability: "permission.create")
+  @field(resolver: "App\\GraphQL\\Mutations\\Permission\\CreatePermission")
+updatePermission(input: UpdatePermissionInput!): Permission!
+  @guard
+  @can(ability: "permission.edit")
+  @field(resolver: "App\\GraphQL\\Mutations\\Permission\\UpdatePermission")
+deletePermission(id: ID!): Permission
+  @guard
+  @can(ability: "permission.delete")
+  @field(resolver: "App\\GraphQL\\Mutations\\Permission\\DeletePermission")

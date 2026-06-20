@@ -1,0 +1,87 @@
+<div class="relative w-full">
+  <!-- Select Trigger (Styled to look like standard text input field) -->
+  <div 
+    matAutocompleteOrigin 
+    #originSelect="matAutocompleteOrigin" 
+    (click)="togglePanel($event, autoSelectTrigger)"
+    class="input-field flex items-center justify-between cursor-pointer relative"
+    [class.opacity-50]="isDisabled()"
+    [class.pointer-events-none]="isDisabled()"
+  >
+    <!-- Visual Content Layer -->
+    <div class="flex items-center w-full min-w-0 pr-6" [class.pl-10]="iconName">
+      <!-- Optional prefix icon -->
+      <div 
+        *ngIf="iconName"
+        class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-zinc-400"
+      >
+        <!-- Clock Icon (heroClock) -->
+        <svg 
+          *ngIf="iconName === 'heroClock'" 
+          xmlns="http://www.w3.org/2000/svg" 
+          fill="none" 
+          viewBox="0 0 24 24" 
+          stroke-width="1.5" 
+          stroke="currentColor" 
+          class="h-5 w-5 text-primary-500"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+        <!-- Map Icon (heroMap) -->
+        <svg 
+          *ngIf="iconName === 'heroMap'" 
+          xmlns="http://www.w3.org/2000/svg" 
+          fill="none" 
+          viewBox="0 0 24 24" 
+          stroke-width="1.5" 
+          stroke="currentColor" 
+          class="h-5 w-5 text-primary-500"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.897-2.448c.526-.263.85-.797.85-1.378V5.62c0-.604-.423-1.127-1.012-1.258l-5.114-1.136a2.25 2.25 0 0 0-1.892 0L6.75 3.125m-1.892 0L1.122 5.62A2.25 2.25 0 0 0 0 7.62v10.76c0 .604.423 1.127 1.012 1.258l5.114 1.136a2.25 2.25 0 0 0 1.892 0l5.114-1.136a2.25 2.25 0 0 1 1.892 0l5.114 1.136c.589.131 1.012-.392 1.012-1.258V7.62c0-.604-.423-1.127-1.012-1.258l-5.114-1.136A2.25 2.25 0 0 0 15 5.62M9 6.75l6-3.75m-6 3.75-6-3.75" />
+        </svg>
+      </div>
+
+      <!-- Text Input for MatAutocomplete -->
+      <input 
+        type="text" 
+        [formControl]="internalControl"
+        [matAutocomplete]="autoSelect"
+        [matAutocompleteConnectedTo]="originSelect"
+        #autoSelectTrigger="matAutocompleteTrigger"
+        readonly
+        [placeholder]="placeholder"
+        (blur)="onTouched()"
+        class="w-full p-0 border-none bg-transparent text-sm font-medium text-zinc-900 focus:outline-none focus:ring-0 placeholder:text-zinc-400 cursor-pointer"
+      />
+    </div>
+
+    <!-- Right chevron dropdown icon -->
+    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-zinc-400">
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        fill="none" 
+        viewBox="0 0 24 24" 
+        stroke-width="2.5" 
+        stroke="currentColor" 
+        class="h-4 w-4 transition-transform duration-200" 
+        [class.rotate-180]="autoSelectTrigger.panelOpen"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+      </svg>
+    </div>
+  </div>
+
+  <!-- Connected Overlay Popup -->
+  <mat-autocomplete #autoSelect="matAutocomplete" [displayWith]="getOptionLabel" panelClass="bg-white border border-zinc-100 rounded-xl shadow-premium py-1 max-h-60 overflow-y-auto scrollbar-thin">
+    <mat-option 
+      *ngFor="let option of options" 
+      [value]="option" 
+      class="!px-4 !py-2.5 !text-sm !font-semibold !cursor-pointer !transition-colors !duration-150 !text-zinc-700 hover:!bg-zinc-50 focus:!bg-primary-50 focus:!text-primary-700"
+    >
+      {{ getOptionLabel(option) }}
+    </mat-option>
+    <mat-option *ngIf="options.length === 0" disabled class="!px-4 !py-3 !text-xs !font-semibold !text-zinc-400 !text-center">
+      No options available
+    </mat-option>
+  </mat-autocomplete>
+</div>

@@ -1,0 +1,49 @@
+<div *ngIf="isOpen"
+     class="fixed inset-0 z-[150] flex items-center justify-center md:p-6 p-0 subtle-backdrop animate-in fade-in duration-200">
+  
+  <!-- Backdrop Click Area (Desktop only) -->
+  <div class="absolute inset-0 hidden md:block" (click)="onClose()"></div>
+
+  <!-- Modal Card -->
+  <div class="relative bg-white w-full h-full md:h-auto md:rounded-3xl shadow-elevated overflow-hidden animate-in duration-300 border-zinc-200/50 md:border md:border-white/20 md:zoom-in-[0.98] md:slide-in-from-bottom-4 flex flex-col"
+       [ngClass]="maxWidth">
+    
+    <!-- Header -->
+    <div class="px-8 pt-7 pb-3 flex items-start justify-between">
+      <div class="space-y-1">
+        <h2 class="text-2xl font-bold text-zinc-900 tracking-tight">{{ title }}</h2>
+        <p *ngIf="subtitle" class="text-sm text-zinc-500 font-medium">{{ subtitle }}</p>
+      </div>
+      <button (click)="onClose()" 
+              class="p-2 text-zinc-400 hover:text-zinc-600 transition-colors">
+        <ng-icon name="heroXMark" class="h-5 w-5"></ng-icon>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="px-8 py-3 flex-1 md:max-h-[70vh] overflow-y-auto custom-scrollbar">
+      <ng-content></ng-content>
+    </div>
+
+    <!-- Footer -->
+    <div *ngIf="showFooter"
+         class="px-6 pt-2 pb-6 md:px-8 md:pb-8 flex items-center justify-end gap-4 shrink-0">
+      <button type="button" 
+              (click)="onClose()"
+              class="px-8 py-3 rounded-xl font-bold text-zinc-500 hover:text-zinc-800 transition-colors">
+        {{ cancelLabel }}
+      </button>
+      <button type="button"
+              (click)="onConfirm()"
+              [disabled]="isConfirmDisabled || isLoading"
+              class="px-8 py-3 text-white rounded-xl font-bold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              [ngClass]="confirmType === 'danger' ? 'bg-red-600 shadow-lg shadow-red-600/20 hover:bg-red-700 hover:shadow-red-700/30' : 'bg-brand shadow-lg shadow-primary-600/20 hover:bg-primary-700 hover:shadow-primary-700/30'">
+        <span *ngIf="!isLoading">{{ confirmLabel }}</span>
+        <div *ngIf="isLoading" class="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+      </button>
+    </div>
+    
+    <!-- Custom Footer Slot -->
+    <ng-content select="[modalFooter]"></ng-content>
+  </div>
+</div>

@@ -1,0 +1,10 @@
+input CreatePermissionInput {
+  name: String!
+  guard_name: String
+}
+
+input UpdatePermissionInput {
+  id: ID!
+  name: String!
+  guard_name: String
+}

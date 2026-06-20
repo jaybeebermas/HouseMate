@@ -1,0 +1,77 @@
+/* Premium Login Styles */
+:host {
+  display: block;
+}
+
+@keyframes slide-in-bottom {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-in {
+  animation: slide-in-bottom 0.4s ease-out forwards;
+}
+
+.antigravity-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f8fafc; /* Lighter, cleaner background */
+}
+
+.particle-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.foreground-content {
+  position: relative;
+  z-index: 10;
+  pointer-events: none; /* Allow mouse events to pass through to the canvas if needed, but we'll handle mouse tracking globally */
+}
+
+/* Ensure form elements are clickable */
+.foreground-content > div {
+  pointer-events: auto;
+}
+
+.google-button-host {
+  display: flex;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+:host ::ng-deep .google-button-host iframe {
+  pointer-events: auto;
+}
+
+.animate-in {
+  animation: slide-up-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slide-up-fade {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.floating-card {
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease-out;
+}
+
+.floating-card:hover {
+  transform: translateY(-5px);
+}

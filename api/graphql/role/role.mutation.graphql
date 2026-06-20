@@ -1,0 +1,12 @@
+createRole(input: CreateRoleInput!): Role!
+  @guard
+  @can(ability: "permission.create")
+  @field(resolver: "App\\GraphQL\\Mutations\\Role\\CreateRole")
+updateRole(input: UpdateRoleInput!): Role!
+  @guard
+  @can(ability: "permission.edit")
+  @field(resolver: "App\\GraphQL\\Mutations\\Role\\UpdateRole")
+deleteRole(id: ID!): Role
+  @guard
+  @can(ability: "permission.delete")
+  @field(resolver: "App\\GraphQL\\Mutations\\Role\\DeleteRole")

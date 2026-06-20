@@ -1,0 +1,10 @@
+type NavigationItem {
+  id: String!
+  title: String!
+  type: String!
+  icon: String
+  route: String
+  permission: String
+  parent: String
+  children: [NavigationItem!]!
+}

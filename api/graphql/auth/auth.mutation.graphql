@@ -1,0 +1,4 @@
+login(input: LoginInput! @spread): LoginResponse! @field(resolver: "App\\GraphQL\\Mutations\\Auth\\AuthMutation@login")
+register(input: RegisterInput! @spread): LoginResponse! @field(resolver: "App\\GraphQL\\Mutations\\Auth\\AuthMutation@register")
+loginWithGoogle(token: String!): LoginResponse! @field(resolver: "App\\GraphQL\\Mutations\\Auth\\AuthMutation@loginWithGoogle")
+logout: LogoutResponse! @field(resolver: "App\\GraphQL\\Mutations\\Auth\\AuthMutation@logout")

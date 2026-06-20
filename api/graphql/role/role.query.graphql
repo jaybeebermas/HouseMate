@@ -1,0 +1,8 @@
+roles: [Role!]!
+  @guard
+  @can(ability: "permission.view")
+  @field(resolver: "App\\GraphQL\\Queries\\Role\\GetRole@roles")
+role(id: ID! @eq): Role
+  @guard
+  @can(ability: "permission.view")
+  @field(resolver: "App\\GraphQL\\Queries\\Role\\GetRole@role")

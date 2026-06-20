@@ -1,0 +1,3 @@
+navigation: [NavigationItem!]!
+  @field(resolver: "App\\GraphQL\\Queries\\Navigation\\NavigationQuery@navigation")
+  @guard
