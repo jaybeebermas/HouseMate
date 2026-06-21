@@ -14,7 +14,8 @@
         <!-- Desktop Navigation -->
         <nav class="hidden md:flex items-center gap-6">
           <button (click)="openSearchOverlay($event)" class="text-sm font-semibold text-[#485366] hover:text-[#18305E] transition-colors cursor-pointer focus:outline-none bg-transparent border-0 p-0">Search Rooms</button>
-          <a href="#" class="text-sm font-semibold text-[#485366] hover:text-[#18305E] transition-colors">Find Housemates</a>
+          <a *ngIf="currentUser?.role !== 'landlord' && currentUser?.role !== 'admin' && currentUser?.role !== 'super_admin' && currentUser?.role !== 'superadmin'" routerLink="/become-landlord" class="text-sm font-semibold text-[#485366] hover:text-[#18305E] transition-colors">Become a Landlord</a>
+          <button *ngIf="currentUser?.role === 'landlord'" (click)="onPostRoom()" class="text-sm font-semibold text-[#485366] hover:text-[#18305E] transition-colors cursor-pointer focus:outline-none bg-transparent border-0 p-0">Post Room for Rent</button>
           <a href="#" class="text-sm font-semibold text-[#485366] hover:text-[#18305E] transition-colors">Advice & Stories</a>
           <a href="#" class="text-sm font-semibold text-[#485366] hover:text-[#18305E] transition-colors">Top Hosts</a>
           <a href="#" class="text-sm font-semibold text-[#485366] hover:text-[#18305E] transition-colors">Community Forum</a>

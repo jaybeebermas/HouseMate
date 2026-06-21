@@ -299,6 +299,74 @@ class AuthMutation
     }
 
     /**
+     * @param  mixed  $_
+     * @param  array{phone_number: string, valid_id_name: string}  $args
+     * @return array{status: string, message: string, user?: User}
+     */
+    public function becomeLandlord(mixed $_, array $args): array
+    {
+        // 1. Ensure migrations and seeders have run to add columns and roles
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasColumn('users', 'phone_number')) {
+                \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+                \Illuminate\Support\Facades\Artisan::call('db:seed', [
+                    '--class' => 'Database\\Seeders\\PermissionSeeder',
+                    '--force' => true
+                ]);
+            }
+        } catch (\Throwable $e) {
+            Log::error('Autorun migrations/seeders failed: ' . $e->getMessage());
+        }
+
+        $user = Auth::user();
+        if (!$user instanceof User) {
+            return [
+                'status' => 'ERROR',
+                'message' => 'Unauthenticated.',
+            ];
+        }
+
+        DB::beginTransaction();
+
+        try {
+            // Update user details
+            $user->phone_number = $args['phone_number'];
+            $user->valid_id = $args['valid_id_name'];
+            $user->role = 'landlord';
+            $user->save();
+
+            // Assign landlord role (Spatie)
+            $roleModelClass = config('permission.models.role');
+            foreach (['web', 'sanctum'] as $guardName) {
+                $roleModelClass::query()->firstOrCreate(
+                    ['name' => 'landlord', 'guard_name' => $guardName]
+                );
+            }
+            $user->syncRoles(['landlord']);
+
+            DB::commit();
+            Log::info('User became a landlord.', ['user_id' => $user->id]);
+
+            return [
+                'status' => 'SUCCESS',
+                'message' => 'You are now registered as a landlord.',
+                'user' => $user,
+            ];
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Become landlord failed.', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'status' => 'ERROR',
+                'message' => 'Failed to become landlord: ' . $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
      * @return User|null
      */
     public function me(): ?User

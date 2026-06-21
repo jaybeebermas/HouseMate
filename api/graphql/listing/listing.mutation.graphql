@@ -1,0 +1,1 @@
+createListing(input: CreateListingInput! @spread): CreateListingResponse! @field(resolver: "App\\GraphQL\\Mutations\\Listing\\ListingMutation@createListing") @guard(with: ["sanctum"])

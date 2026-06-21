@@ -6,6 +6,8 @@ type AuthUser {
   email: String!
   role: String
   permissions: [String!]! @rename(attribute: "permissions_list")
+  phone_number: String
+  valid_id: String
 }
 
 type LoginResponse {
@@ -18,4 +20,10 @@ type LoginResponse {
 type LogoutResponse {
   status: String!
   message: String!
+}
+
+type BecomeLandlordResponse {
+  status: String!
+  message: String!
+  user: AuthUser
 }

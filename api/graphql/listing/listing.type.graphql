@@ -1,0 +1,21 @@
+type Listing {
+  id: ID!
+  user_id: ID!
+  category: String!
+  price: Float!
+  details: String!
+  latitude: Float!
+  longitude: Float!
+  address: String!
+  images: [String!]
+  cover_image: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  user: User! @belongsTo
+}
+
+type CreateListingResponse {
+  status: String!
+  message: String!
+  listing: Listing
+}
