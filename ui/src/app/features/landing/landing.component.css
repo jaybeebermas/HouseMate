@@ -1,1 +1,58 @@
-/* Landing component styles */
+/* CSS animations for Prosple-style Landing Page */
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.floating-illustration {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-accent {
+  0% {
+    box-shadow: 0 0 0 0 rgba(249, 199, 79, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(249, 199, 79, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(249, 199, 79, 0);
+  }
+}
+
+.banner-action-btn {
+  animation: pulse-accent 2.5s infinite;
+}
+
+@keyframes pulse-gift {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  10%, 20% {
+    transform: scale(0.9) rotate(-3deg);
+  }
+  30%, 50%, 70%, 90% {
+    transform: scale(1.1) rotate(3deg);
+  }
+  40%, 60%, 80% {
+    transform: scale(1.1) rotate(-3deg);
+  }
+}
+
+.banner-gift-box:hover svg {
+  animation: pulse-gift 0.8s ease-in-out;
+}
+
+/* Subtle border animation for the search panel focus */
+.search-panel-container select:focus {
+  border-color: #679AFA;
+  box-shadow: 0 0 0 2px rgba(103, 154, 250, 0.2);
+}
