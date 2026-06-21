@@ -1,0 +1,3 @@
+myListings: [Listing!]! @field(resolver: "App\\GraphQL\\Queries\\Listing\\ListingQuery@myListings") @guard(with: ["sanctum"])
+listings: [Listing!]! @field(resolver: "App\\GraphQL\\Queries\\Listing\\ListingQuery@listings")
+listing(id: ID! @eq): Listing @find

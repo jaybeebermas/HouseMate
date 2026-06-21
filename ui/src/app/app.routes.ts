@@ -13,6 +13,24 @@ export const routes: Routes = [
     children: adminRoutes
   },
   {
+    path: 'become-landlord',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/landlord/become-landlord/become-landlord.component').then(m => m.BecomeLandlordComponent)
+  },
+  {
+    path: 'landlord/post',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/landlord/landlord-post/landlord-post.component').then(m => m.LandlordPostComponent)
+  },
+  {
+    path: 'listings/:id',
+    loadComponent: () => import('./features/listings/listing-details/listing-details.component').then(m => m.ListingDetailsComponent)
+  },
+  {
+    path: 'login-required',
+    loadComponent: () => import('./features/auth/login-required/login-required.component').then(m => m.LoginRequiredComponent)
+  },
+  {
     path: 'landing',
     loadComponent: () => import('./features/landing/landing.component').then(m => m.LandingComponent)
   },
