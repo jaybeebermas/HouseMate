@@ -27,6 +27,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/landing/landing.component').then(m => m.LandingComponent)
   },
   {
+    path: 'showcase',
+    loadComponent: () => import('./shared/components/ui/showcase/showcase.component').then(m => m.ShowcaseComponent)
+  },
+  {
     path: '',
     loadComponent: () => import('./features/landing/landing.component').then(m => m.LandingComponent),
     pathMatch: 'full'

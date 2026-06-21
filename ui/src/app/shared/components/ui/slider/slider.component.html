@@ -1,0 +1,49 @@
+<div class="w-full flex flex-col">
+  <div class="flex items-center justify-between mb-2">
+    <label *ngIf="label" class="label-classic mb-0">{{ label }}</label>
+    <div class="text-sm font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-md">
+      <ng-container *ngIf="range; else singleVal">
+        {{ rangeForm.value.start }} - {{ rangeForm.value.end }}
+      </ng-container>
+      <ng-template #singleVal>
+        {{ singleControl.value }}
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- Range Slider -->
+  <ng-container *ngIf="range">
+    <mat-slider 
+      [min]="min" 
+      [max]="max" 
+      [step]="step" 
+      [discrete]="discrete"
+      class="custom-slider w-full"
+    >
+      <mat-slider-range-thumb 
+        [formControl]="$any(rangeForm.controls.start)"
+        value="start"
+      ></mat-slider-range-thumb>
+      <mat-slider-range-thumb 
+        [formControl]="$any(rangeForm.controls.end)"
+        value="end"
+      ></mat-slider-range-thumb>
+    </mat-slider>
+  </ng-container>
+
+  <!-- Single Value Slider -->
+  <ng-container *ngIf="!range">
+    <mat-slider 
+      [min]="min" 
+      [max]="max" 
+      [step]="step" 
+      [discrete]="discrete"
+      class="custom-slider w-full"
+    >
+      <input 
+        matSliderThumb 
+        [formControl]="singleControl"
+      />
+    </mat-slider>
+  </ng-container>
+</div>
