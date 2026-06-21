@@ -2,11 +2,12 @@ import { Component, inject, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService, User } from '../../services/auth/auth.service';
+import { SearchOverlayComponent } from '../../shared/components/ui/search-overlay/search-overlay.component';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SearchOverlayComponent],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
@@ -15,6 +16,7 @@ export class LandingComponent {
   private readonly router = inject(Router);
 
   public readonly showDropdown = signal(false);
+  public readonly showSearch = signal(typeof localStorage !== 'undefined' ? localStorage.getItem('search_overlay_open') === 'true' : false);
 
   public readonly featuredListings = [
     {
@@ -105,6 +107,22 @@ export class LandingComponent {
   toggleDropdown(event: Event): void {
     event.stopPropagation();
     this.showDropdown.update(v => !v);
+  }
+
+  openSearchOverlay(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.showSearch.set(true);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('search_overlay_open', 'true');
+    }
+  }
+
+  closeSearchOverlay(): void {
+    this.showSearch.set(false);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('search_overlay_open', 'false');
+    }
   }
 
   @HostListener('document:click')

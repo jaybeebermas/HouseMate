@@ -7,6 +7,7 @@ import { NavigationItem } from './shared/models';
 import { AdminLayoutComponent } from './shared/components/layout/admin-layout/admin-layout.component';
 import { ModalComponent } from './shared/components/ui/modal/modal.component';
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
+import { AiHelperComponent } from './shared/components/ui/ai-helper/ai-helper.component';
 import { filter } from 'rxjs';
 
 type NavNode = Omit<NavigationItem, 'children'> & {
@@ -17,7 +18,7 @@ type NavNode = Omit<NavigationItem, 'children'> & {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, AdminLayoutComponent, NgIconComponent, ModalComponent, DashboardComponent],
+  imports: [CommonModule, RouterOutlet, AdminLayoutComponent, NgIconComponent, ModalComponent, DashboardComponent, AiHelperComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -43,6 +44,11 @@ export class App implements OnInit {
 
   isGuestUser(): boolean {
     return this.authService.currentUser()?.role === 'guest';
+  }
+
+  isLandingPage(): boolean {
+    const url = this.router.url.split('?')[0];
+    return url === '/' || url === '/landing';
   }
 
   constructor() {
