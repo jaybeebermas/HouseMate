@@ -25,13 +25,25 @@
   --color-accent-800: #9a3412;
   --color-accent-900: #7c2d12;
 
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+
+
   --color-brand: var(--color-primary-600);
   --color-brand-foreground: #ffffff;
 
   /* Shadows */
   --shadow-premium: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
   --shadow-elevated: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  
+
   /* Radii */
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
@@ -48,10 +60,21 @@
 }
 
 /* User-defined UI Scaling */
-:root[data-size="small"] { --base-font-size: 14px; }
-:root[data-size="medium"] { --base-font-size: 16px; }
-:root[data-size="large"] { --base-font-size: 18px; }
-:root[data-size="xl"] { --base-font-size: 20px; }
+:root[data-size="small"] {
+  --base-font-size: 14px;
+}
+
+:root[data-size="medium"] {
+  --base-font-size: 16px;
+}
+
+:root[data-size="large"] {
+  --base-font-size: 18px;
+}
+
+:root[data-size="xl"] {
+  --base-font-size: 20px;
+}
 
 /* Base resets and defaults */
 @layer base {
@@ -59,7 +82,7 @@
     font-size: var(--base-font-size);
     scroll-behavior: smooth;
   }
-  
+
   body {
     @apply h-full w-full bg-zinc-100 text-zinc-900;
     font-family: var(--font-sans);
@@ -67,7 +90,12 @@
     line-height: 1.6;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-bold tracking-tight text-zinc-900;
     font-family: var(--font-display);
   }
@@ -78,7 +106,7 @@
   .glass-card {
     @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-premium;
   }
-  
+
   .btn-primary {
     @apply px-5 py-2.5 bg-brand text-white rounded-xl font-bold shadow-lg shadow-primary-600/20 hover:bg-primary-700 hover:shadow-primary-700/30 active:scale-95 transition-all flex items-center justify-center gap-2;
     font-size: 1rem;
@@ -105,8 +133,15 @@
 
 /* Animation utilities */
 @keyframes fade-in-up {
-  from { opacity: 0; margin-top: 10px; }
-  to { opacity: 1; margin-top: 0; }
+  from {
+    opacity: 0;
+    margin-top: 10px;
+  }
+
+  to {
+    opacity: 1;
+    margin-top: 0;
+  }
 }
 
 .animate-fade-in-up {
@@ -114,8 +149,13 @@
 }
 
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .fade-in {
@@ -123,8 +163,15 @@
 }
 
 @keyframes slide-in-from-right {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .slide-in-from-right {
@@ -169,6 +216,7 @@
 
 /* Ensure admin content doesn't overflow on mobile */
 @media (max-width: 640px) {
+
   .btn-primary,
   .btn-outline {
     font-size: 0.875rem;
