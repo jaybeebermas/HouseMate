@@ -8,6 +8,7 @@ extend type Query {
   #import role/role.query.graphql
   #import navigation/navigation.query.graphql
   #import user/user.query.graphql
+  #import listing/listing.query.graphql
 }
 
 extend type Mutation {
@@ -15,15 +16,18 @@ extend type Mutation {
   #import permission/permission.mutation.graphql
   #import role/role.mutation.graphql
   #import user/user.mutation.graphql
+  #import listing/listing.mutation.graphql
 }
 
 #import auth/auth.input.graphql
 #import permission/permission.input.graphql
 #import role/role.input.graphql
 #import user/user.input.graphql
+#import listing/listing.input.graphql
 
 #import auth/auth.type.graphql
 #import permission/permission.type.graphql
 #import role/role.type.graphql
 #import navigation/navigation.type.graphql
 #import user/user.types.graphql
+#import listing/listing.type.graphql

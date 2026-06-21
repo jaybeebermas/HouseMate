@@ -6,6 +6,9 @@ type User {
     email: String!
     role: String
     permissions: [String!]! @rename(attribute: "permissions_list")
+    phone_number: String
+    valid_id: String
+    avatar: String
     created_at: String
     updated_at: String
 }

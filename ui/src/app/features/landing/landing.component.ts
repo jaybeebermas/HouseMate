@@ -1,65 +1,146 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, HostListener, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '../../services/auth/auth.service';
+import { ToastService } from '../../services/toast/toast.service';
+import { SearchOverlayComponent } from '../../shared/components/ui/search-overlay/search-overlay.component';
+import { GraphqlService } from '../../services/graphql/graphql.service';
+import { FooterComponent } from '../../shared/components/layout/footer/footer.component';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SearchOverlayComponent, RouterLink, FooterComponent],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
-export class LandingComponent {
+export class LandingComponent implements OnInit {
   public readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
+  private readonly graphqlService = inject(GraphqlService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
-  public readonly featuredListings = [
-    {
-      title: 'Premium Loft near De La Salle University',
-      location: 'Malate, Manila',
-      price: '₱8,500/mo',
-      rating: 4.8,
-      reviewsCount: 24,
-      coverUrl: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=400&q=80',
-      landlordName: 'Maria Santos',
-      landlordAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80',
-      badge: 'Highly Rated'
-    },
-    {
-      title: 'Modern Studio in Bonifacio Global City',
-      location: 'Taguig, Metro Manila',
-      price: '₱18,000/mo',
-      rating: 4.9,
-      reviewsCount: 16,
-      coverUrl: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=400&q=80',
-      landlordName: 'John Doe',
-      landlordAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&q=80',
-      badge: 'Verified'
-    },
-    {
-      title: 'Cozy Shared Apartment near Ateneo',
-      location: 'Katipunan, Quezon City',
-      price: '₱6,500/mo',
-      rating: 4.7,
-      reviewsCount: 32,
-      coverUrl: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=400&q=80',
-      landlordName: 'Elena Ramos',
-      landlordAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80',
-      badge: 'Popular'
-    },
-    {
-      title: 'Spacious Studio Room in Cebu IT Park',
-      location: 'Lahug, Cebu City',
-      price: '₱9,500/mo',
-      rating: 4.6,
-      reviewsCount: 11,
-      coverUrl: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=400&q=80',
-      landlordName: 'Carlos Mangubat',
-      landlordAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80',
-      badge: 'New Listing'
+  public readonly showDropdown = signal(false);
+
+  onUnderDevelopment(event: Event, featureName: string): void {
+    event.preventDefault();
+    this.toastService.show(`${featureName} is currently under development.`, 'info', 'Coming Soon');
+  }
+
+  onPostRoom(): void {
+    this.router.navigate(['/landlord/post']);
+  }
+  public readonly showSearch = signal(typeof localStorage !== 'undefined' ? localStorage.getItem('search_overlay_open') === 'true' : false);
+
+  public featuredListings: any[] = [];
+
+  private readonly getListingsQuery = `
+    query GetListings {
+      listings {
+        id
+        category
+        price
+        details
+        latitude
+        longitude
+        address
+        images
+        cover_image
+        rating
+        reviews_count
+        created_at
+        user {
+          id
+          first_name
+          last_name
+          email
+          avatar
+        }
+      }
     }
-  ];
+  `;
+
+  ngOnInit(): void {
+    this.loadListings();
+  }
+
+  async loadListings(): Promise<void> {
+    try {
+      const response = await this.graphqlService.request<{ listings: any[] }>(this.getListingsQuery);
+      if (response && response.listings) {
+        const mapped = response.listings.slice(0, 4).map((l: any) => ({
+          id: l.id,
+          title: this.getListingTitle(l),
+          location: this.getShortAddress(l.address),
+          price: `₱${parseFloat(l.price).toLocaleString()}/mo`,
+          rating: l.rating ?? 5.0,
+          reviewsCount: l.reviews_count ?? 0,
+          coverUrl: l.cover_image || (l.images && l.images[0]) || 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=400&q=80',
+          landlordName: l.user ? `${l.user.first_name} ${l.user.last_name}` : 'Unknown Landlord',
+          landlordAvatar: l.user?.avatar || null,
+          landlordFirstName: l.user?.first_name || '',
+          landlordLastName: l.user?.last_name || '',
+          badge: this.getListingBadge(l.price, l.id)
+        }));
+        this.featuredListings = mapped;
+        this.cdr.detectChanges();
+      }
+    } catch (err: any) {
+      console.error('Failed to load listings:', err);
+      this.toastService.show(err.message || 'Could not retrieve listings.', 'error', 'Data Load Error');
+    }
+  }
+
+  getInitials(firstName: string, lastName: string): string {
+    const f = firstName ? firstName.charAt(0).toUpperCase() : '';
+    const l = lastName ? lastName.charAt(0).toUpperCase() : '';
+    return f + l;
+  }
+
+  getCategoryLabel(category: string): string {
+    const labels: Record<string, string> = {
+      room: 'Private Room',
+      apartment: 'Apartment',
+      bedspace: 'Cozy Bedspace',
+      house: 'House for Rent'
+    };
+    return labels[category] || category;
+  }
+
+  getListingTitle(listing: any): string {
+    if (!listing.details) return `${this.getCategoryLabel(listing.category)} for Rent`;
+    const stripped = listing.details.replace(/<[^>]*>/g, '').trim();
+    if (stripped.length > 10) {
+      return stripped.substring(0, 50) + (stripped.length > 50 ? '...' : '');
+    }
+    return `${this.getCategoryLabel(listing.category)} for Rent`;
+  }
+
+  getShortAddress(address: string): string {
+    if (!address) return '';
+    const parts = address.split(',');
+    if (parts.length <= 2) {
+      return address;
+    }
+    if (parts.length >= 5) {
+      const city = parts[parts.length - 5].trim();
+      const state = parts[parts.length - 3].trim();
+      return `${city}, ${state}`;
+    }
+    const first = parts[0].trim();
+    const last = parts[parts.length - 3]?.trim() || parts[parts.length - 2]?.trim() || '';
+    return `${first}, ${last}`;
+  }
+
+
+  getListingBadge(price: number, id: any): string {
+    const idNum = parseInt(id) || 1;
+    if (price < 8000) return 'Budget Friendly';
+    if (price >= 15000) return 'Premium';
+    const badges = ['Verified', 'Highly Rated', 'Popular', 'New Listing'];
+    return badges[idNum % badges.length];
+  }
 
   public readonly adviceArticles = [
     {
@@ -100,12 +181,33 @@ export class LandingComponent {
     }
   }
 
-  goToDashboard(): void {
-    this.router.navigate(['/admin/dashboard']);
+  toggleDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showDropdown.update(v => !v);
+  }
+
+  openSearchOverlay(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.showSearch.set(true);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('search_overlay_open', 'true');
+    }
+  }
+
+  closeSearchOverlay(): void {
+    this.showSearch.set(false);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('search_overlay_open', 'false');
+    }
+  }
+
+  @HostListener('document:click')
+  closeDropdown(): void {
+    this.showDropdown.set(false);
   }
 
   logout(): void {
     this.authService.logout().subscribe();
   }
 }
-

@@ -1,0 +1,479 @@
+<div class="min-h-screen bg-[#F4F6F9] font-sans antialiased text-[#485366] pb-16">
+  
+  <!-- Global Header Navbar -->
+  <header class="sticky top-0 z-50 w-full bg-white border-b border-slate-200/80 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Left side: Logo & Navigation -->
+      <div class="flex items-center gap-8">
+        <a routerLink="/" class="flex items-center gap-2 group">
+          <img src="/login.png" class="w-9 h-9 rounded-lg object-cover shadow-sm transition-transform group-hover:scale-105" alt="Logo" />
+          <span class="text-xl font-bold tracking-tight text-[#18305E] group-hover:text-[#679AFA] transition-colors">HouseMate</span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-6">
+          <button (click)="openSearchOverlay($event)" class="text-sm font-semibold text-[#485366] hover:text-[#18305E] transition-colors cursor-pointer focus:outline-none bg-transparent border-0 p-0">Search Rooms</button>
+          <a *ngIf="currentUser?.role !== 'landlord' && currentUser?.role !== 'admin' && currentUser?.role !== 'super_admin' && currentUser?.role !== 'superadmin'" routerLink="/become-landlord" class="text-sm font-semibold text-[#485366] hover:text-[#18305E] transition-colors">Become a Landlord</a>
+          <button *ngIf="currentUser?.role === 'landlord'" (click)="onPostRoom()" class="text-sm font-semibold text-[#485366] hover:text-[#18305E] transition-colors cursor-pointer focus:outline-none bg-transparent border-0 p-0">Post Room for Rent</button>
+          <a href="#" (click)="onUnderDevelopment($event, 'Advice & Stories')" class="text-sm font-semibold text-[#485366] hover:text-[#18305E] transition-colors">Advice & Stories</a>
+          <a href="#" (click)="onUnderDevelopment($event, 'Top Hosts')" class="text-sm font-semibold text-[#485366] hover:text-[#18305E] transition-colors">Top Hosts</a>
+          <a href="#" (click)="onUnderDevelopment($event, 'Community Forum')" class="text-sm font-semibold text-[#485366] hover:text-[#18305E] transition-colors">Community Forum</a>
+        </nav>
+      </div>
+
+      <!-- Right side: Authentication Actions -->
+      <div class="flex items-center gap-4">
+
+        <!-- Dynamic Auth States -->
+        <ng-container *ngIf="!authService.isAuthenticated(); else authenticatedUser">
+          <button (click)="goToLogin(false)" class="px-4 py-2 text-sm font-semibold text-[#18305E] hover:text-[#679AFA] transition-colors cursor-pointer">
+            Sign In
+          </button>
+          <button (click)="goToLogin(true)" class="px-4 py-2 text-sm font-semibold text-white bg-[#18305E] hover:bg-[#254685] rounded-[3px] shadow-sm transition-all hover:shadow-md cursor-pointer">
+            Join Free
+          </button>
+        </ng-container>
+
+        <ng-template #authenticatedUser>
+          <div class="relative flex items-center gap-3 pl-3 border-l border-slate-200">
+            <!-- Profile Clickable Trigger -->
+            <button (click)="toggleDropdown($event)" class="flex items-center gap-2.5 focus:outline-none cursor-pointer group text-left px-2 py-1.5 rounded-xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-200/50">
+              <!-- User Profile Avatar/Initials -->
+              <div class="w-8 h-8 rounded-full bg-[#18305E] text-white flex items-center justify-center font-bold text-xs shadow-sm group-hover:bg-[#254685] transition-all select-none">
+                {{ currentUser?.first_name?.[0] }}{{ currentUser?.last_name?.[0] }}
+              </div>
+              
+              <!-- Info block: Name + Email -->
+              <div class="hidden lg:flex flex-col">
+                <span class="text-xs font-bold text-[#18305E] leading-tight group-hover:text-zinc-800 transition-colors">
+                  {{ currentUser?.first_name }} {{ currentUser?.last_name }}
+                </span>
+                <span class="text-[10px] text-zinc-400 font-semibold mt-0.5 leading-none">
+                  {{ currentUser?.email }}
+                </span>
+              </div>
+
+              <!-- Dropdown Chevron Icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-600 transition-all" [ngClass]="{'rotate-180': showDropdown()}">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div *ngIf="showDropdown()" 
+                 class="absolute right-0 top-12 w-52 bg-white border border-slate-200/80 rounded-[4px] shadow-lg py-1 z-50 animate-fade-in"
+                 (click)="$event.stopPropagation()">
+              
+              <!-- Dropdown user identity header -->
+              <div class="px-4 py-3 border-b border-zinc-100 flex flex-col gap-1 select-none">
+                <p class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider leading-none">Signed in as</p>
+                <p class="text-xs font-bold text-zinc-800 mt-1 truncate">{{ currentUser?.first_name }} {{ currentUser?.last_name }}</p>
+                <p class="text-[10px] text-zinc-400 font-semibold truncate leading-none mt-0.5">{{ currentUser?.email }}</p>
+              </div>
+
+              <a href="#" class="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#485366] hover:bg-slate-50 hover:text-[#18305E] transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-slate-400">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a9.001 9.001 0 0 1-11.985-.021M18.062 14.5a9.001 9.001 0 0 0-11.985-.021M19.5 10.5a9 9 0 0 0-19.5 0" />
+                </svg>
+                Notification
+              </a>
+
+              <a href="#" class="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#485366] hover:bg-slate-50 hover:text-[#18305E] transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-slate-400">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3h9m-9 3h9" />
+                </svg>
+                Message
+              </a>
+
+              <a href="#" class="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#485366] hover:bg-slate-50 hover:text-[#18305E] transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-slate-400">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.99l1.005.831a1.125 1.125 0 0 1 .26 1.43l-1.297 2.247a1.125 1.125 0 0 1-1.37.491l-1.216-.456c-.356-.133-.751-.072-1.076.124a6.57 6.57 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.43l1.004-.83c.292-.24.437-.613.43-.992a6.932 6.932 0 0 1 0-.255c.007-.378-.138-.75-.43-.99l-1.004-.831a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.645-.869l.214-1.28Z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+                Settings
+              </a>
+
+              <div class="border-t border-slate-100 my-1"></div>
+
+              <button (click)="logout()" class="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors text-left cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-red-500">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+                </svg>
+                Logout
+              </button>
+            </div>
+          </div>
+        </ng-template>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Title & Search Subheader -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="text-center md:text-left">
+      <h2 class="text-2xl font-extrabold text-[#18305E]">Browse Co-Living Rooms</h2>
+      <p class="text-xs text-[#727272] mt-1">Filter and find student-friendly rentals near you.</p>
+    </div>
+    
+    <!-- Search Bar aligned to the right -->
+    <form (submit)="submitSearch($event)" class="w-full md:max-w-md flex items-center bg-white rounded-lg shadow-sm overflow-hidden p-1 border border-slate-200">
+      <div class="pl-3 text-slate-400 shrink-0">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.603 10.603z" />
+        </svg>
+      </div>
+      <input 
+        type="text" 
+        [value]="tempSearchQuery()"
+        (input)="onSearchInput($event)"
+        placeholder="Search by area, landmark or details..." 
+        class="w-full py-2 px-3 text-slate-800 text-sm focus:outline-none bg-transparent"
+      />
+      <button 
+        *ngIf="tempSearchQuery()" 
+        type="button" 
+        (click)="clearSearch()" 
+        class="p-2 text-slate-400 hover:text-slate-600 cursor-pointer shrink-0"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <button type="submit" class="bg-[#18305E] hover:bg-[#679AFA] text-white px-5 py-2 rounded-[4px] text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer shrink-0">
+        Search
+      </button>
+    </form>
+  </section>
+
+  <!-- Content Section -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      
+      <!-- Left Column: Filters Sidebar (Sticky to prevent blank spaces on scroll) -->
+      <aside class="lg:col-span-1 space-y-6 lg:sticky lg:top-20 self-start">
+        
+        <!-- Unified Filter Container -->
+        <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm p-6 space-y-6">
+          
+          <!-- Category Filter -->
+          <div>
+            <h3 class="text-sm font-bold text-[#18305E] uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Category</h3>
+            <div class="space-y-1">
+              <button 
+                (click)="setCategory('')"
+                [class.bg-[#CEEBFF]/40]="activeCategory() === ''"
+                [class.text-[#18305E]]="activeCategory() === ''"
+                [class.font-bold]="activeCategory() === ''"
+                [class.hover:bg-slate-50]="activeCategory() !== ''"
+                class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-medium text-[#727272] transition-colors cursor-pointer flex justify-between items-center"
+              >
+                <span>All Categories</span>
+                <span *ngIf="activeCategory() === ''" class="w-1.5 h-1.5 rounded-full bg-[#18305E]"></span>
+              </button>
+
+              <button 
+                (click)="setCategory('room')"
+                [class.bg-[#CEEBFF]/40]="activeCategory() === 'room'"
+                [class.text-[#18305E]]="activeCategory() === 'room'"
+                [class.font-bold]="activeCategory() === 'room'"
+                [class.hover:bg-slate-50]="activeCategory() !== 'room'"
+                class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-medium text-[#727272] transition-colors cursor-pointer flex justify-between items-center"
+              >
+                <span>Private Rooms</span>
+                <span *ngIf="activeCategory() === 'room'" class="w-1.5 h-1.5 rounded-full bg-[#18305E]"></span>
+              </button>
+
+              <button 
+                (click)="setCategory('apartment')"
+                [class.bg-[#CEEBFF]/40]="activeCategory() === 'apartment'"
+                [class.text-[#18305E]]="activeCategory() === 'apartment'"
+                [class.font-bold]="activeCategory() === 'apartment'"
+                [class.hover:bg-slate-50]="activeCategory() !== 'apartment'"
+                class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-medium text-[#727272] transition-colors cursor-pointer flex justify-between items-center"
+              >
+                <span>Apartments</span>
+                <span *ngIf="activeCategory() === 'apartment'" class="w-1.5 h-1.5 rounded-full bg-[#18305E]"></span>
+              </button>
+
+              <button 
+                (click)="setCategory('bedspace')"
+                [class.bg-[#CEEBFF]/40]="activeCategory() === 'bedspace'"
+                [class.text-[#18305E]]="activeCategory() === 'bedspace'"
+                [class.font-bold]="activeCategory() === 'bedspace'"
+                [class.hover:bg-slate-50]="activeCategory() !== 'bedspace'"
+                class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-medium text-[#727272] transition-colors cursor-pointer flex justify-between items-center"
+              >
+                <span>Cozy Bedspaces</span>
+                <span *ngIf="activeCategory() === 'bedspace'" class="w-1.5 h-1.5 rounded-full bg-[#18305E]"></span>
+              </button>
+
+              <button 
+                (click)="setCategory('house')"
+                [class.bg-[#CEEBFF]/40]="activeCategory() === 'house'"
+                [class.text-[#18305E]]="activeCategory() === 'house'"
+                [class.font-bold]="activeCategory() === 'house'"
+                [class.hover:bg-slate-50]="activeCategory() !== 'house'"
+                class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-medium text-[#727272] transition-colors cursor-pointer flex justify-between items-center"
+              >
+                <span>Houses</span>
+                <span *ngIf="activeCategory() === 'house'" class="w-1.5 h-1.5 rounded-full bg-[#18305E]"></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Price Range Filter -->
+          <div>
+            <h3 class="text-sm font-bold text-[#18305E] uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Price Limit (PHP)</h3>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-[10px] font-bold text-[#727272] uppercase block mb-1">Min Price</label>
+                <input 
+                  type="number" 
+                  [value]="minPrice()"
+                  (change)="onPriceChange('min', $event)"
+                  placeholder="e.g. 3000"
+                  class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-[#18305E]"
+                />
+              </div>
+              <div>
+                <label class="text-[10px] font-bold text-[#727272] uppercase block mb-1">Max Price</label>
+                <input 
+                  type="number" 
+                  [value]="maxPrice()"
+                  (change)="onPriceChange('max', $event)"
+                  placeholder="e.g. 15000"
+                  class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-[#18305E]"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Sort Filter -->
+          <div>
+            <h3 class="text-sm font-bold text-[#18305E] uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Sort Results</h3>
+            <div class="relative">
+              <select 
+                (change)="onSortChange($event)"
+                [value]="sortBy()"
+                class="w-full bg-white border border-slate-200 px-3 py-2.5 rounded-lg text-xs font-semibold text-[#18305E] focus:outline-none focus:border-[#18305E] cursor-pointer appearance-none"
+              >
+                <option value="newest">Newest First</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+                <option value="rating_desc">Top Reviewed</option>
+              </select>
+              <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-[#727272]">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Become a Host CTA Card -->
+        <div class="bg-gradient-to-br from-[#18305E] to-[#254685] text-white rounded-xl shadow-sm p-6 space-y-4 text-left">
+          <div>
+            <h4 class="text-sm font-bold uppercase tracking-wider text-[#CEEBFF]">List Your Room</h4>
+            <p class="text-xs text-slate-200 mt-2 leading-relaxed">
+              Have an extra room or bedspace? Advertise it to thousands of verified students today.
+            </p>
+          </div>
+          <button (click)="onPostRoom()" class="w-full py-2.5 bg-white hover:bg-slate-50 text-[#18305E] text-xs font-bold rounded-[3px] transition-colors uppercase tracking-wider text-center cursor-pointer">
+            Start Posting
+          </button>
+        </div>
+
+        <!-- Safety Guidelines Widget -->
+        <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm p-6 space-y-4 text-left">
+          <h4 class="text-xs font-bold text-[#18305E] uppercase tracking-wider border-b border-slate-100 pb-2 flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-teal-600">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.745 3.745 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+            </svg>
+            <span>Safety & Trust</span>
+          </h4>
+          <ul class="space-y-3 text-[11px] text-[#727272] leading-relaxed">
+            <li class="flex items-start gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 shrink-0"></span>
+              <span>Look for the <strong>Verified Landlord</strong> badge for secure applications.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 shrink-0"></span>
+              <span>Always tour co-living spaces in person before signing contracts.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 shrink-0"></span>
+              <span>Keep communication and agreements within the HouseMate portal.</span>
+            </li>
+          </ul>
+        </div>
+
+      </aside>
+
+      <!-- Right Column: Listings Grid -->
+      <main class="lg:col-span-3 space-y-6">
+        
+
+
+        <!-- Skeleton Loading State -->
+        <div *ngIf="isLoading()" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div *ngFor="let i of [1, 2, 3, 4, 5, 6]" class="bg-white rounded-lg border border-slate-200 shadow-sm p-4 space-y-4 animate-pulse">
+            <div class="h-44 bg-slate-200 rounded-lg w-full"></div>
+            <div class="h-4 bg-slate-200 rounded w-1/3"></div>
+            <div class="h-4 bg-slate-200 rounded w-3/4"></div>
+            <div class="h-3 bg-slate-200 rounded w-1/2"></div>
+            <div class="pt-3 border-t border-slate-100 flex justify-between">
+              <div class="h-4 bg-slate-200 rounded w-1/4"></div>
+              <div class="h-4 bg-slate-200 rounded w-1/4"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Listings Loaded Grid -->
+        <div *ngIf="!isLoading() && listings().length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div *ngFor="let listing of listings()" class="bg-white rounded-[8px] border border-black overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group flex flex-col justify-between text-left">
+            
+            <!-- Cover Photo & Badge -->
+            <div [routerLink]="['/listings', listing.id]" class="relative h-44 overflow-hidden shrink-0 bg-slate-100 cursor-pointer">
+              <img [src]="listing.coverUrl" alt="Listing cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+              <span class="absolute top-3 left-3 bg-[#CEEBFF] text-[#18305E] text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-[3px] shadow-sm">
+                {{ listing.badge }}
+              </span>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-5 pt-0 relative flex-1 flex flex-col justify-between">
+              
+              <!-- Landlord Avatar Overlap -->
+              <div class="flex items-center justify-between h-8 mb-5 select-none">
+                <div class="-mt-8 border border-black w-14 h-14 rounded-full overflow-hidden shadow-sm bg-white shrink-0 flex items-center justify-center">
+                  <img *ngIf="listing.landlordAvatar" [src]="listing.landlordAvatar" [alt]="listing.landlordName" class="w-full h-full object-cover" />
+                  <div *ngIf="!listing.landlordAvatar" class="w-full h-full bg-[#CEEBFF] text-[#18305E] flex items-center justify-center font-bold text-sm">
+                    {{ getInitials(listing.landlordFirstName, listing.landlordLastName) }}
+                  </div>
+                </div>
+                <div class="text-right pt-2">
+                  <span class="text-xs font-bold text-[#727272] block leading-none">Price starts at</span>
+                  <span class="text-base font-extrabold text-[#18305E]">{{ listing.price }}</span>
+                </div>
+              </div>
+
+              <!-- Listing Content -->
+              <div class="flex-1 flex flex-col justify-between">
+                <div>
+                  <span class="text-[10px] font-bold text-[#727272] uppercase tracking-wider block mb-1.5">{{ listing.location }}</span>
+                  <h4 [routerLink]="['/listings', listing.id]" class="text-sm font-bold text-[#18305E] line-clamp-2 hover:text-[#679AFA] transition-colors leading-snug cursor-pointer">
+                    {{ listing.title }}
+                  </h4>
+                </div>
+
+                <!-- Review Stars & Landlord details -->
+                <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                  <div class="flex items-center gap-1 text-[#F9C74F]">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                      <path fill-rule="evenodd" d="M10.788 2.903a.75.75 0 0 1 1.424 0l2.082 5.006 5.404.434a.75.75 0 0 1 .42 1.285l-4.017 3.69 1.07 5.304a.75.75 0 0 1-1.12.812L12 16.947l-4.832 2.625a.75.75 0 0 1-1.12-.812l1.07-5.304-4.018-3.69a.75.75 0 0 1 .42-1.285l5.404-.434 2.082-5.005Z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-bold text-[#18305E]">{{ listing.rating }}</span>
+                    <span class="text-[#727272]">({{ listing.reviewsCount }})</span>
+                  </div>
+                  <span class="text-[#727272] font-semibold">By {{ listing.landlordName }}</span>
+                </div>
+              </div>
+
+              <!-- Action CTA -->
+              <a [routerLink]="['/listings', listing.id]" class="w-full mt-4 py-2 border border-[#18305E] hover:bg-slate-50 text-[#18305E] text-xs font-bold rounded-[3px] transition-colors uppercase tracking-wider text-center cursor-pointer block">
+                View Details
+              </a>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Zero State -->
+        <div *ngIf="!isLoading() && listings().length === 0" class="bg-white rounded-xl border border-slate-200 p-12 text-center flex flex-col items-center">
+          <div class="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-8 h-8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+          </div>
+          <h4 class="text-base font-bold text-[#18305E]">No Room Listings Found</h4>
+          <p class="text-xs text-[#727272] mt-1 max-w-sm">No postings match your search filters or price limits. Try clearing your search parameters or price targets.</p>
+          <button (click)="clearSearch(); setCategory(''); minPrice.set(null); maxPrice.set(null); loadListings();" class="mt-6 px-6 py-2.5 bg-[#18305E] hover:bg-[#679AFA] text-white font-bold rounded-[4px] uppercase tracking-wider text-xs shadow-sm transition-colors cursor-pointer">
+            Clear Filters
+          </button>
+        </div>
+
+        <!-- Pagination & Summary Footer -->
+        <footer *ngIf="!isLoading() && listings().length > 0" class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-xl border border-slate-200/80 p-4 shadow-sm select-none">
+          
+          <!-- Summary statistics -->
+          <div class="text-xs text-[#727272] font-semibold flex items-center gap-2.5">
+            <span>Showing <span class="text-[#18305E] font-bold">{{ (page() - 1) * limit + 1 }}–{{ page() * limit > totalListings() ? totalListings() : page() * limit }}</span> of <span class="text-[#18305E] font-bold">{{ totalListings() }}</span> room posts</span>
+            <span class="text-slate-300">|</span>
+            <span>Page <span class="text-[#18305E] font-bold">{{ page() }}</span> of <span class="text-[#18305E] font-bold">{{ totalPages() }}</span></span>
+          </div>
+
+          <!-- Page buttons -->
+          <div *ngIf="totalPages() > 1" class="flex items-center gap-3">
+            <!-- Prev Button -->
+            <button 
+              (click)="goToPage(page() - 1)" 
+              [disabled]="page() === 1"
+              [class.opacity-50]="page() === 1"
+              [class.cursor-not-allowed]="page() === 1"
+              class="px-3 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition-colors cursor-pointer flex items-center gap-1"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
+              <span>Prev</span>
+            </button>
+
+            <!-- Page indicators -->
+            <div class="flex gap-1">
+              <button 
+                *ngFor="let p of getPages()" 
+                (click)="goToPage(p)"
+                [class.bg-[#18305E]]="page() === p"
+                [class.text-white]="page() === p"
+                [class.border-[#18305E]]="page() === p"
+                [class.border-slate-200]="page() !== p"
+                [class.text-slate-700]="page() !== p"
+                [class.hover:bg-slate-50]="page() !== p"
+                class="w-7 h-7 rounded-lg border text-xs font-bold transition-all cursor-pointer flex items-center justify-center"
+              >
+                {{ p }}
+              </button>
+            </div>
+
+            <!-- Next Button -->
+            <button 
+              (click)="goToPage(page() + 1)" 
+              [disabled]="!hasMore()"
+              [class.opacity-50]="!hasMore()"
+              [class.cursor-not-allowed]="!hasMore()"
+              class="px-3 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition-colors cursor-pointer flex items-center gap-1"
+            >
+              <span>Next</span>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+          </div>
+
+        </footer>
+
+      </main>
+
+    </div>
+  </div>
+
+  <app-footer class="mt-16 block"></app-footer>
+
+</div>
+
+<!-- Search Overlay component -->
+<app-search-overlay [isOpen]="showSearch()" (close)="closeSearchOverlay()"></app-search-overlay>

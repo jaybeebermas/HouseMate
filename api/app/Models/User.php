@@ -12,7 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['username', 'first_name', 'last_name', 'email', 'password', 'role'])]
+#[Fillable(['username', 'first_name', 'last_name', 'email', 'password', 'role', 'phone_number', 'valid_id', 'avatar'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -37,5 +37,15 @@ class User extends Authenticatable
     public function getPermissionsListAttribute(): array
     {
         return $this->getAllPermissions()->pluck('name')->toArray();
+    }
+
+    public function getAvatarAttribute(?string $value): ?string
+    {
+        return $value;
+    }
+
+    public function listings(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Listing::class);
     }
 }

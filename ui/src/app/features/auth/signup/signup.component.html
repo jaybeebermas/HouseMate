@@ -1,0 +1,175 @@
+<div class="split-screen-container h-screen max-h-screen w-full lg:grid lg:grid-cols-2 overflow-hidden bg-zinc-50 relative">
+  
+  <!-- Left Column: Cover Image (Visible on Desktop) -->
+  <div class="hidden lg:block relative h-full w-full bg-zinc-100 overflow-hidden lg:col-start-1 lg:col-span-1">
+    <img src="/login.png" alt="Signup Background" class="absolute inset-0 h-full w-full object-cover" />
+    <div class="absolute inset-0 bg-gradient-to-tr from-black/10 via-transparent to-transparent pointer-events-none"></div>
+  </div>
+
+  <!-- Right Column: Form Container -->
+  <div class="relative h-full w-full lg:col-start-2 lg:col-span-1 overflow-hidden flex flex-col justify-center">
+    
+    <!-- Sign Up Form Wrapper (Animate entrance) -->
+    <div class="flex flex-col justify-center p-6 sm:p-8 lg:p-12 h-full overflow-y-auto form-wrapper form-container-animate">
+      <!-- Center Content -->
+      <div class="w-full max-w-[400px] mx-auto py-8">
+        <!-- Title Header -->
+        <div class="text-left mb-8">
+          <h2 class="text-3xl font-bold tracking-tight text-zinc-900 mb-2">Create an account</h2>
+        </div>
+
+        <!-- Google Sign In Button -->
+        <div class="w-full mb-4">
+          <div #googleButtonRegister id="googleBtnRegister" class="google-button-host w-full min-h-[44px]"></div>
+        </div>
+
+        <!-- Divider -->
+        <div class="relative flex py-4 items-center justify-center">
+          <div class="flex-grow border-t border-zinc-200"></div>
+          <span class="flex-shrink mx-4 text-xs font-medium text-zinc-400">or</span>
+          <div class="flex-grow border-t border-zinc-200"></div>
+        </div>
+
+        <!-- ========== SIGN UP FORM ========== -->
+        <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()" class="space-y-4">
+          <!-- Username -->
+          <div>
+            <input
+              id="reg-username"
+              type="text"
+              formControlName="username"
+              placeholder="Username"
+              class="mobbin-input w-full px-5 py-3.5 bg-white border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none transition-all placeholder-zinc-400"
+            />
+            <div *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.invalid" class="mt-1.5 ml-4">
+              <p class="text-[11px] text-red-500 font-medium">Username is required.</p>
+            </div>
+          </div>
+
+          <!-- First Name / Last Name Row -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <input
+                id="reg-first-name"
+                type="text"
+                formControlName="first_name"
+                placeholder="First Name"
+                class="mobbin-input w-full px-5 py-3.5 bg-white border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none transition-all placeholder-zinc-400"
+              />
+              <div *ngIf="registerForm.get('first_name')?.touched && registerForm.get('first_name')?.invalid" class="mt-1.5 ml-4">
+                <p class="text-[11px] text-red-500 font-medium">Required.</p>
+              </div>
+            </div>
+            <div>
+              <input
+                id="reg-last-name"
+                type="text"
+                formControlName="last_name"
+                placeholder="Last Name"
+                class="mobbin-input w-full px-5 py-3.5 bg-white border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none transition-all placeholder-zinc-400"
+              />
+              <div *ngIf="registerForm.get('last_name')?.touched && registerForm.get('last_name')?.invalid" class="mt-1.5 ml-4">
+                <p class="text-[11px] text-red-500 font-medium">Required.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div>
+            <input
+              id="reg-email"
+              type="email"
+              formControlName="email"
+              placeholder="Email Address"
+              class="mobbin-input w-full px-5 py-3.5 bg-white border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none transition-all placeholder-zinc-400"
+            />
+            <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="mt-1.5 ml-4">
+              <p class="text-[11px] text-red-500 font-medium">A valid email is required.</p>
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div>
+            <div class="relative">
+              <input
+                id="reg-password"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="Password"
+                class="mobbin-input w-full px-5 py-3.5 pr-12 bg-white border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none transition-all placeholder-zinc-400"
+              />
+              <button
+                type="button"
+                (click)="togglePassword()"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors"
+                aria-label="Toggle password visibility"
+              >
+                <ng-icon *ngIf="!showPassword()" name="heroEye" class="text-lg"></ng-icon>
+                <ng-icon *ngIf="showPassword()" name="heroEyeSlash" class="text-lg"></ng-icon>
+              </button>
+            </div>
+            <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="mt-1.5 ml-4">
+              <p class="text-[11px] text-red-500 font-medium">Password must be at least 8 characters.</p>
+            </div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div>
+            <input
+              id="reg-confirm-password"
+              type="password"
+              formControlName="confirm_password"
+              placeholder="Confirm Password"
+              class="mobbin-input w-full px-5 py-3.5 bg-white border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none transition-all placeholder-zinc-400"
+            />
+            <div *ngIf="registerForm.get('confirm_password')?.touched && registerForm.get('confirm_password')?.invalid" class="mt-1.5 ml-4">
+              <p class="text-[11px] text-red-500 font-medium">Passwords do not match.</p>
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          <div *ngIf="errorMessage()"
+            class="p-2.5 bg-red-50 border border-red-200 rounded-xl animate-fade-in">
+            <p class="text-xs text-red-600 font-medium text-center">{{ errorMessage() }}</p>
+          </div>
+
+          <!-- Success Message -->
+          <div *ngIf="successMessage()"
+            class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl animate-fade-in">
+            <p class="text-xs text-emerald-600 font-medium text-center">{{ successMessage() }}</p>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            [disabled]="isLoading() || registerForm.invalid"
+            class="w-full rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white font-medium py-3.5 px-6 text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-6"
+          >
+            <span *ngIf="!isLoading()">Create Account</span>
+            <span *ngIf="isLoading()" class="flex items-center gap-2">
+              <svg class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+              </svg>
+              Creating Account...
+            </span>
+          </button>
+
+          <!-- Toggle to Sign In -->
+          <div class="text-center pt-4 space-y-3">
+            <p class="text-xs text-zinc-500">
+              Already have an account?
+              <button type="button" (click)="navigateToLogin()" class="text-zinc-900 font-semibold hover:underline ml-1">Sign In</button>
+            </p>
+            <div class="text-center text-[11px] text-zinc-400">
+              By continuing, you agree to HouseMate's
+              <a href="#" class="text-zinc-600 hover:underline">Terms of Service</a> and
+              <a href="#" class="text-zinc-600 hover:underline">Privacy Policy</a>.
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>

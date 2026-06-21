@@ -10,3 +10,8 @@ input RegisterInput {
   email: String!
   password: String!
 }
+
+input BecomeLandlordInput {
+  phone_number: String!
+  valid_id_name: String!
+}
