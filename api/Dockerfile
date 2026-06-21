@@ -42,5 +42,5 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Expose port 80
 EXPOSE 80
 
-# Start Apache
-CMD ["apache2-foreground"]
+# Start Apache with migrations, seeding, and cache clearing
+CMD sh -c "php artisan migrate --seed --force && php artisan optimize:clear && php artisan lighthouse:cache-clear && php artisan cache:clear && apache2-foreground"
