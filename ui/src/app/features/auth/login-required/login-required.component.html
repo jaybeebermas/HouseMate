@@ -1,29 +1,105 @@
-<div class="min-h-screen bg-[#F8FAFC] flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 py-12">
-  <div class="max-w-md w-full bg-white rounded-[12px] border border-slate-200/80 shadow-md p-8 text-center flex flex-col items-center">
-    
-    <!-- Premium padlock icon wrapper with subtle animation/pulses -->
-    <div class="w-20 h-20 rounded-full bg-[#CEEBFF]/50 text-[#18305E] flex items-center justify-center mb-6 shadow-inner animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-10 h-10">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-      </svg>
+<div
+  class="min-h-screen bg-[#F8FAFC] relative overflow-hidden flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 py-16">
+
+  <!-- Floating background glowing ambient blobs -->
+  <div
+    class="absolute top-1/4 left-1/3 w-72 h-72 bg-blue-100/50 rounded-full blur-[100px] pointer-events-none select-none">
+  </div>
+  <div
+    class="absolute bottom-1/4 right-1/3 w-80 h-80 bg-teal-50/50 rounded-full blur-[120px] pointer-events-none select-none">
+  </div>
+
+  <!-- Main Card wrapper -->
+  <div
+    class="relative max-w-md w-full bg-white rounded-2xl border border-slate-200/60 shadow-xl shadow-slate-200/30 p-8 sm:p-10 text-center flex flex-col items-center z-10 transition-all duration-300 hover:shadow-2xl">
+
+    <!-- Lock Icon with Concentric Rings and pulsing effects -->
+    <div class="relative w-24 h-24 flex items-center justify-center mb-8 select-none">
+      <!-- Outer soft pulse ring -->
+      <span class="absolute inset-0 rounded-full bg-blue-50/70 animate-ping opacity-75"></span>
+      <!-- Middle ring -->
+      <span class="absolute inset-2 rounded-full bg-[#CEEBFF]/40 border border-blue-100"></span>
+      <!-- Inner gradient core -->
+      <div
+        class="absolute inset-4 rounded-full bg-gradient-to-tr from-[#18305E] to-[#679AFA] text-white flex items-center justify-center shadow-md">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8">
+          <path fill-rule="evenodd"
+            d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z"
+            clip-rule="evenodd" />
+        </svg>
+      </div>
     </div>
 
-    <!-- Message header -->
-    <h2 class="text-2xl font-extrabold text-[#18305E] mb-3">Login to view the full details</h2>
-    
-    <!-- Descriptive body text -->
-    <p class="text-sm text-[#727272] leading-relaxed mb-8 max-w-sm">
-      To protect the privacy and safety of our verified student tenants and landlords, you must be logged in to view full listing descriptions, maps, and direct contact details.
+    <!-- Message Header -->
+    <h2 class="text-2xl font-extrabold text-[#18305E] tracking-tight mb-3">
+      Login to View Full Details
+    </h2>
+
+    <!-- Description body text -->
+    <p class="text-sm text-[#727272] leading-relaxed mb-6 max-w-sm">
+      To protect the privacy and safety of our verified student tenants and landlords, please authenticate your account
+      to view this page.
     </p>
 
+    <!-- Checklist of locked features for premium look -->
+    <div class="w-full bg-slate-50 border border-slate-100 rounded-xl p-4 mb-8 text-left space-y-3">
+      <h4 class="text-xs font-bold text-[#18305E]/80 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+        Unlocks after logging in:
+      </h4>
+
+      <div class="flex items-start gap-2.5 text-xs text-[#525252]">
+        <span
+          class="w-4 h-4 rounded-full bg-teal-100/80 text-teal-700 flex items-center justify-center shrink-0 mt-0.5 select-none">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-2.5 h-2.5">
+            <path fill-rule="evenodd"
+              d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+              clip-rule="evenodd" />
+          </svg>
+        </span>
+        <span>Full listing details, room pricing and verified landlord profiles</span>
+      </div>
+
+      <div class="flex items-start gap-2.5 text-xs text-[#525252]">
+        <span
+          class="w-4 h-4 rounded-full bg-teal-100/80 text-teal-700 flex items-center justify-center shrink-0 mt-0.5 select-none">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-2.5 h-2.5">
+            <path fill-rule="evenodd"
+              d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+              clip-rule="evenodd" />
+          </svg>
+        </span>
+        <span>Direct contact details (instant email inquiry & telephone number)</span>
+      </div>
+
+      <div class="flex items-start gap-2.5 text-xs text-[#525252]">
+        <span
+          class="w-4 h-4 rounded-full bg-teal-100/80 text-teal-700 flex items-center justify-center shrink-0 mt-0.5 select-none">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-2.5 h-2.5">
+            <path fill-rule="evenodd"
+              d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+              clip-rule="evenodd" />
+          </svg>
+        </span>
+        <span>Interactive Leaflet maps, nearest landmarks, and school belts</span>
+      </div>
+    </div>
+
     <!-- CTAs -->
-    <button (click)="goToLogin()" class="w-full py-3 bg-[#18305E] hover:bg-[#679AFA] text-white font-bold rounded-[4px] transition-colors uppercase tracking-wider text-sm shadow-sm cursor-pointer mb-3">
-      Go Log In
-    </button>
-    
-    <button (click)="goHome()" class="w-full py-3 border border-slate-300 hover:bg-slate-50 text-[#18305E] font-bold rounded-[4px] transition-colors uppercase tracking-wider text-sm cursor-pointer">
-      Return to Home
-    </button>
+    <div class="w-full space-y-3">
+      <button (click)="goToLogin()"
+        class="w-full py-3.5 bg-gradient-to-r from-[#18305E] to-[#254C94] hover:from-[#254C94] hover:to-[#18305E] text-white font-bold rounded-lg transition-all duration-300 uppercase tracking-wider text-xs shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer flex items-center justify-center gap-2">
+        <span>Go Log In</span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+          class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </button>
+
+      <button (click)="goHome()"
+        class="w-full py-3.5 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-[#18305E] font-bold rounded-lg transition-all duration-300 uppercase tracking-wider text-xs cursor-pointer">
+        Return to Home
+      </button>
+    </div>
 
   </div>
 </div>

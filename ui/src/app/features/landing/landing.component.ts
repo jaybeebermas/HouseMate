@@ -5,11 +5,12 @@ import { AuthService, User } from '../../services/auth/auth.service';
 import { ToastService } from '../../services/toast/toast.service';
 import { SearchOverlayComponent } from '../../shared/components/ui/search-overlay/search-overlay.component';
 import { GraphqlService } from '../../services/graphql/graphql.service';
+import { FooterComponent } from '../../shared/components/layout/footer/footer.component';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, SearchOverlayComponent, RouterLink],
+  imports: [CommonModule, SearchOverlayComponent, RouterLink, FooterComponent],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
@@ -21,6 +22,11 @@ export class LandingComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
 
   public readonly showDropdown = signal(false);
+
+  onUnderDevelopment(event: Event, featureName: string): void {
+    event.preventDefault();
+    this.toastService.show(`${featureName} is currently under development.`, 'info', 'Coming Soon');
+  }
 
   onPostRoom(): void {
     this.router.navigate(['/landlord/post']);

@@ -21,3 +21,9 @@ type CreateListingResponse {
   message: String!
   listing: Listing
 }
+
+type PaginatedListings {
+  data: [Listing!]!
+  total: Int!
+  hasMore: Boolean!
+}
