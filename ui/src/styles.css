@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "@angular/material/prebuilt-themes/indigo-pink.css";
+@import url('https://fonts.googleapis.com/css2?family=Pliant:ital,wght@0,100..900;1,100..900&display=swap');
+
 
 @theme {
   /* Colors */
@@ -38,8 +40,8 @@
   --radius-3xl: 2rem;
 
   /* Typography */
-  --font-sans: "Google Sans", "Inter", system-ui, -apple-system, sans-serif;
-  --font-display: "Google Sans", "Sora", sans-serif;
+  --font-sans: "Pliant", "Google Sans", "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Pliant", "Google Sans", "Sora", sans-serif;
 }
 
 /* Global Sizing Config */

@@ -1,6 +1,6 @@
 import { Component, signal, ViewChild, ElementRef, AfterViewInit, OnDestroy, HostListener, effect, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import { NgIconComponent } from '@ng-icons/core';
@@ -8,19 +8,19 @@ import { NgIconComponent } from '@ng-icons/core';
 declare var google: any;
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-signup',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, NgIconComponent],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  templateUrl: './signup.component.html',
+  styleUrl: './signup.component.css'
 })
-export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('googleButtonLogin') googleButtonLoginRef!: ElementRef<HTMLDivElement>;
+export class SignupComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('googleButtonRegister') googleButtonRegisterRef!: ElementRef<HTMLDivElement>;
   
   private googleInitialized = false;
   private resizeTimeout: any = null;
 
-  loginForm: FormGroup;
+  registerForm: FormGroup;
   isLoading = signal(false);
   errorMessage = signal('');
   successMessage = signal('');
@@ -44,10 +44,18 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     }
 
-    this.loginForm = this.fb.group({
+    this.registerForm = this.fb.group({
       username: ['', [Validators.required]],
+      first_name: ['', [Validators.required]],
+      last_name: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      rememberMe: [false]
+      confirm_password: ['', [Validators.required]]
+    }, { validators: this.passwordMatchValidator });
+
+    // Keep confirm_password in sync when password changes
+    this.registerForm.get('password')?.valueChanges.subscribe(() => {
+      this.registerForm.get('confirm_password')?.updateValueAndValidity();
     });
   }
 
@@ -55,6 +63,16 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     this.errorMessage.set('');
     this.successMessage.set('');
     this.showPassword.set(false);
+  }
+
+  passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
+    const password = group.get('password')?.value;
+    const confirm = group.get('confirm_password')?.value;
+    if (password && confirm && password !== confirm) {
+      group.get('confirm_password')?.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
+    }
+    return null;
   }
 
   ngAfterViewInit() {
@@ -111,18 +129,18 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   renderGoogleButton(): void {
     if (typeof google === 'undefined') return;
 
-    const loginBtnContainer = this.googleButtonLoginRef?.nativeElement;
-    if (loginBtnContainer) {
-      loginBtnContainer.replaceChildren();
+    const registerBtnContainer = this.googleButtonRegisterRef?.nativeElement;
+    if (registerBtnContainer) {
+      registerBtnContainer.replaceChildren();
       google.accounts.id.renderButton(
-        loginBtnContainer,
+        registerBtnContainer,
         {
           theme: 'outline',
           size: 'large',
           shape: 'rectangular',
           text: 'continue_with',
           logo_alignment: 'left',
-          width: Math.floor(loginBtnContainer.parentElement?.clientWidth || loginBtnContainer.clientWidth || 382)
+          width: Math.floor(registerBtnContainer.parentElement?.clientWidth || registerBtnContainer.clientWidth || 382)
         }
       );
     }
@@ -191,31 +209,32 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showPassword.update(v => !v);
   }
 
-  navigateToSignup(): void {
-    this.router.navigate(['/signup']);
+  navigateToLogin(): void {
+    this.router.navigate(['/login']);
   }
 
-  onSubmit(): void {
-    if (this.loginForm.invalid) {
+  onRegisterSubmit(): void {
+    if (this.registerForm.invalid) {
       return;
     }
 
     this.isLoading.set(true);
     this.errorMessage.set('');
+    this.successMessage.set('');
 
-    const { username, password } = this.loginForm.value;
+    const { username, first_name, last_name, email, password } = this.registerForm.value;
 
-    this.authService.login(username, password).subscribe({
+    this.authService.register({ username, first_name, last_name, email, password }).subscribe({
       next: (response) => {
-        if (response.data?.login?.status === 'SUCCESS') {
-          this.redirectUser(response.data.login.user);
+        if (response.data?.register?.status === 'SUCCESS') {
+          this.redirectUser(response.data.register.user);
         } else {
-          this.errorMessage.set(response.data?.login?.message || 'Login failed.');
+          this.errorMessage.set(response.data?.register?.message || 'Registration failed.');
         }
         this.isLoading.set(false);
       },
       error: (err) => {
-        this.errorMessage.set(err.message || 'An error occurred during login.');
+        this.errorMessage.set(err.message || 'An error occurred during registration.');
         this.isLoading.set(false);
       }
     });

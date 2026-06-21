@@ -193,17 +193,7 @@ export class AuthService {
         localStorage.removeItem('auth_timestamp');
         this.currentUser.set(null);
         this.isAuthenticated.set(false);
-        
-        const currentPath = this.router.url.split('?')[0];
-        if (currentPath === '/login' || currentPath === '/landing') {
-          return;
-        }
-
-        if (autoRedirect) {
-          this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
-        } else {
-          this.router.navigate(['/login']);
-        }
+        this.router.navigate(['/']);
       }),
       catchError(() => {
         // Even if server call fails, clear local state
@@ -211,17 +201,7 @@ export class AuthService {
         localStorage.removeItem('auth_timestamp');
         this.currentUser.set(null);
         this.isAuthenticated.set(false);
-        
-        const currentPath = this.router.url.split('?')[0];
-        if (currentPath === '/login' || currentPath === '/landing') {
-          return of(null);
-        }
-
-        if (autoRedirect) {
-          this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
-        } else {
-          this.router.navigate(['/login']);
-        }
+        this.router.navigate(['/']);
         return of(null);
       })
     );
