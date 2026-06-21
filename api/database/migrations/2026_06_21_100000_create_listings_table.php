@@ -21,7 +21,7 @@ return new class extends Migration
             $table->decimal('longitude', 11, 8);
             $table->string('address');
             $table->json('images')->nullable();
-            $table->string('cover_image')->nullable();
+            $table->longText('cover_image')->nullable();
             $table->timestamps();
         });
     }

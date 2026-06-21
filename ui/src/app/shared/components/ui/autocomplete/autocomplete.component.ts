@@ -6,7 +6,9 @@ import {
   forwardRef,
   signal,
   ChangeDetectionStrategy,
-  OnInit
+  OnInit,
+  inject,
+  ChangeDetectorRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -50,6 +52,8 @@ export class AutocompleteComponent implements ControlValueAccessor, OnInit {
   onChange: any = () => {};
   onTouched: any = () => {};
 
+  private readonly cdr = inject(ChangeDetectorRef);
+
   ngOnInit() {
     // Emit search query on type with a debounce
     this.internalControl.valueChanges
@@ -58,12 +62,15 @@ export class AutocompleteComponent implements ControlValueAccessor, OnInit {
         distinctUntilChanged()
       )
       .subscribe(val => {
-        const query = typeof val === 'string' ? val : this.getOptionLabel(val);
-        this.queryChange.emit(query);
-
-        // If an option was selected, propagate its value
-        const matchedVal = this.getOptionValue(val);
-        this.onChange(matchedVal);
+        if (typeof val === 'string') {
+          this.queryChange.emit(val);
+          this.onChange(val);
+        } else {
+          // Object selection: propagate matched value without triggering a new search query
+          const matchedVal = this.getOptionValue(val);
+          this.onChange(matchedVal);
+        }
+        this.cdr.markForCheck();
       });
   }
 
@@ -93,12 +100,14 @@ export class AutocompleteComponent implements ControlValueAccessor, OnInit {
     const selectedOption = event.option.value;
     const value = this.getOptionValue(selectedOption);
     this.onChange(value);
+    this.cdr.markForCheck();
   }
 
   // ControlValueAccessor Implementation
   writeValue(value: any): void {
     const matched = this.options.find(opt => this.getOptionValue(opt) === value);
     this.internalControl.setValue(matched !== undefined ? matched : value, { emitEvent: false });
+    this.cdr.markForCheck();
   }
 
   registerOnChange(fn: any): void {
@@ -116,5 +125,6 @@ export class AutocompleteComponent implements ControlValueAccessor, OnInit {
     } else {
       this.internalControl.enable({ emitEvent: false });
     }
+    this.cdr.markForCheck();
   }
 }
