@@ -1,0 +1,87 @@
+<footer class="w-full bg-[#F8F9FA] border-t border-slate-200/60 pt-16 pb-12 select-none text-left">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+    
+    <!-- Footer Info Column -->
+    <div class="col-span-2 flex flex-col items-start gap-4">
+      <a routerLink="/" class="flex items-center gap-2 group">
+        <img src="/login.png" class="w-8 h-8 rounded-lg object-cover shadow-sm transition-transform group-hover:scale-105" alt="Logo" />
+        <span class="text-lg font-bold tracking-tight text-[#18305E]">HouseMate</span>
+      </a>
+      <p class="text-xs text-[#727272] leading-relaxed max-w-sm mt-1">
+        HouseMate is a graduate student housing and co-living coordinator directory. Helping students find affordable, verified, and friendly homes near top university belts.
+      </p>
+    </div>
+
+    <!-- Links Column 1 -->
+    <div>
+      <h4 class="text-xs font-bold text-[#18305E] uppercase tracking-wider mb-4">For Renters</h4>
+      <ul class="space-y-2.5 text-xs text-[#727272]">
+        <li>
+          <a routerLink="/listings" class="hover:text-[#18305E] transition-colors cursor-pointer">Search Student Rooms</a>
+        </li>
+        <li>
+          <a href="#" (click)="onUnderDevelopment($event, 'Roommate Finder')" class="hover:text-[#18305E] transition-colors cursor-pointer">Find a Compatible Roommate</a>
+        </li>
+        <li>
+          <a href="#" (click)="onUnderDevelopment($event, 'Verification Guides')" class="hover:text-[#18305E] transition-colors cursor-pointer">Safety Guides & Verification</a>
+        </li>
+        <li>
+          <a href="#" (click)="onUnderDevelopment($event, 'Rent Subsidy Info')" class="hover:text-[#18305E] transition-colors cursor-pointer">Student Rent Subsidy 2026</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Links Column 2 -->
+    <div>
+      <h4 class="text-xs font-bold text-[#18305E] uppercase tracking-wider mb-4">For Landlords</h4>
+      <ul class="space-y-2.5 text-xs text-[#727272]">
+        <li>
+          <a routerLink="/landlord/post" class="hover:text-[#18305E] transition-colors cursor-pointer">List your Shared Room</a>
+        </li>
+        <li>
+          <a href="#" (click)="onUnderDevelopment($event, 'Landlord Terms')" class="hover:text-[#18305E] transition-colors cursor-pointer">Landlord Terms of Service</a>
+        </li>
+        <li>
+          <a href="#" (click)="onUnderDevelopment($event, 'Pricing Plans')" class="hover:text-[#18305E] transition-colors cursor-pointer">Pricing & Premium Slots</a>
+        </li>
+        <li>
+          <a href="#" (click)="onUnderDevelopment($event, 'Identity Scheme')" class="hover:text-[#18305E] transition-colors cursor-pointer">Identity Verification Scheme</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Links Column 3 -->
+    <div>
+      <h4 class="text-xs font-bold text-[#18305E] uppercase tracking-wider mb-4">Company</h4>
+      <ul class="space-y-2.5 text-xs text-[#727272]">
+        <li>
+          <a href="#" (click)="onUnderDevelopment($event, 'About Us')" class="hover:text-[#18305E] transition-colors cursor-pointer">About Us</a>
+        </li>
+        <li>
+          <a href="#" (click)="onUnderDevelopment($event, 'Support Desk')" class="hover:text-[#18305E] transition-colors cursor-pointer">Contact Support</a>
+        </li>
+        <li>
+          <a href="#" (click)="onUnderDevelopment($event, 'Privacy Policy')" class="hover:text-[#18305E] transition-colors cursor-pointer">Privacy Policy</a>
+        </li>
+        <li>
+          <a href="#" (click)="onUnderDevelopment($event, 'Terms & Conditions')" class="hover:text-[#18305E] transition-colors cursor-pointer">Terms & Conditions</a>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Footer Copyright Block -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-200/50 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <span class="text-xs text-[#727272]">
+      © 2026 HouseMate (HouseMate UI Sandbox). All rights reserved.
+    </span>
+    <div class="flex items-center gap-4 text-xs text-[#727272]">
+      <a href="#" (click)="onUnderDevelopment($event, 'Facebook Page')" class="hover:text-[#18305E] transition-colors cursor-pointer">Facebook</a>
+      <span>•</span>
+      <a href="#" (click)="onUnderDevelopment($event, 'LinkedIn Profile')" class="hover:text-[#18305E] transition-colors cursor-pointer">LinkedIn</a>
+      <span>•</span>
+      <a href="#" (click)="onUnderDevelopment($event, 'Instagram Handle')" class="hover:text-[#18305E] transition-colors cursor-pointer">Instagram</a>
+    </div>
+  </div>
+</footer>

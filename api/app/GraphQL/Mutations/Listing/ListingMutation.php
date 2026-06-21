@@ -57,6 +57,8 @@ class ListingMutation
                 'address' => $args['address'],
                 'images' => $args['images'],
                 'cover_image' => $args['cover_image'],
+                'rating' => 5.0,
+                'reviews_count' => 0,
             ]);
 
             DB::commit();
