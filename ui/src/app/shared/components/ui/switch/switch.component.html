@@ -1,0 +1,15 @@
+<div class="flex items-center gap-3">
+  <mat-slide-toggle
+    [formControl]="internalControl"
+    class="custom-slide-toggle"
+  >
+  </mat-slide-toggle>
+  <span 
+    *ngIf="label" 
+    class="text-sm font-semibold text-zinc-700 select-none cursor-pointer"
+    [class.opacity-50]="isDisabled()"
+    (click)="!isDisabled() && internalControl.setValue(!internalControl.value)"
+  >
+    {{ label }}
+  </span>
+</div>

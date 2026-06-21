@@ -1,0 +1,96 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Success Checkmark Shadow */
+.success-checkmark {
+  box-shadow: inset 0 2px 4px 0 rgba(74, 222, 128, 0.1), 0 10px 15px -3px rgba(74, 222, 128, 0.2);
+}
+
+/* Rich Text Editor Custom Formatting Styles */
+.rich-editor-content {
+  min-height: 160px;
+  max-height: 280px;
+  overflow-y: auto;
+  outline: none;
+  font-family: inherit;
+}
+
+/* Custom placeholder styling for contenteditable */
+.rich-editor-content:empty::before {
+  content: attr(placeholder);
+  color: #94a3b8;
+  font-weight: 500;
+  pointer-events: none;
+  display: block;
+}
+
+/* Standard HTML structure styles inside rich text content */
+.rich-editor-content ul {
+  list-style-type: disc !important;
+  margin-left: 1.5rem !important;
+  padding-left: 0.5rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.rich-editor-content b, .rich-editor-content strong {
+  font-weight: bold !important;
+}
+
+.rich-editor-content i, .rich-editor-content em {
+  font-style: italic !important;
+}
+
+.rich-editor-content u {
+  text-decoration: underline !important;
+}
+
+/* Custom Dropdown Overlays styles */
+.absolute.z-50 {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  max-height: 240px;
+}
+
+/* Interactive Dropzone transitions */
+.border-dashed {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Mobile responsive optimizations */
+@media (max-width: 640px) {
+  main {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .grid-cols-2 {
+    grid-cols-2: repeat(2, minmax(0, 1fr)) !important;
+  }
+}

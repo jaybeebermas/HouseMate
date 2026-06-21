@@ -1,0 +1,73 @@
+/* Search Overlay Backdrop Fade In */
+@keyframes fadeInBackdrop {
+  from {
+    background-color: rgba(24, 24, 27, 0);
+    backdrop-filter: blur(0px);
+  }
+  to {
+    background-color: rgba(24, 24, 27, 0.6);
+    backdrop-filter: blur(4px);
+  }
+}
+
+.search-overlay-backdrop {
+  animation: fadeInBackdrop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Modal scaling from top */
+@keyframes scaleUpModal {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.search-modal-container {
+  animation: scaleUpModal 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-shadow: 0 25px 50px -12px rgba(24, 24, 27, 0.25);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Custom Scrollbar for results body */
+.scroll-container {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: thin;  /* Firefox */
+  scrollbar-color: rgba(24, 24, 27, 0.08) transparent;
+}
+
+.scroll-container::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(24, 24, 27, 0.08);
+  border-radius: 9999px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(24, 24, 27, 0.15);
+}
+
+/* Custom animation for list items */
+@keyframes listSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-modal-container a {
+  animation: listSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

@@ -12,6 +12,8 @@ export interface User {
   email: string;
   role: string;
   permissions?: string[];
+  phone_number?: string;
+  valid_id?: string;
 }
 
 @Injectable({
@@ -177,6 +179,103 @@ export class AuthService {
     );
   }
 
+  becomeLandlord(phoneNumber: string, validIdName: string): Observable<any> {
+    const query = `
+      mutation BecomeLandlord($phoneNumber: String!, $validIdName: String!) {
+        becomeLandlord(input: { phone_number: $phoneNumber, valid_id_name: $validIdName }) {
+          status
+          message
+          user {
+            id
+            username
+            first_name
+            last_name
+            email
+            role
+            permissions
+            phone_number
+            valid_id
+          }
+        }
+      }
+    `;
+
+    return this.http.post<any>(this.apiUrl, {
+      query,
+      variables: { phoneNumber, validIdName }
+    }).pipe(
+      tap(response => {
+        const data = response.data?.becomeLandlord;
+        if (data && data.status === 'SUCCESS' && data.user) {
+          this.currentUser.set(data.user);
+        }
+      })
+    );
+  }
+
+  createListing(input: {
+    category: string;
+    price: number;
+    details: string;
+    latitude: number;
+    longitude: number;
+    address: string;
+    images: string[];
+    cover_image: string;
+  }): Observable<any> {
+    const query = `
+      mutation CreateListing(
+        $category: String!,
+        $price: Float!,
+        $details: String!,
+        $latitude: Float!,
+        $longitude: Float!,
+        $address: String!,
+        $images: [String!]!,
+        $coverImage: String!
+      ) {
+        createListing(input: {
+          category: $category,
+          price: $price,
+          details: $details,
+          latitude: $latitude,
+          longitude: $longitude,
+          address: $address,
+          images: $images,
+          cover_image: $coverImage
+        }) {
+          status
+          message
+          listing {
+            id
+            category
+            price
+            details
+            latitude
+            longitude
+            address
+            images
+            cover_image
+          }
+        }
+      }
+    `;
+
+    return this.http.post<any>(this.apiUrl, {
+      query,
+      variables: {
+        category: input.category,
+        price: input.price,
+        details: input.details,
+        latitude: input.latitude,
+        longitude: input.longitude,
+        address: input.address,
+        images: input.images,
+        coverImage: input.cover_image,
+      }
+    });
+  }
+
   logout(autoRedirect: boolean = true): Observable<any> {
     const query = `
       mutation {
@@ -193,17 +292,7 @@ export class AuthService {
         localStorage.removeItem('auth_timestamp');
         this.currentUser.set(null);
         this.isAuthenticated.set(false);
-        
-        const currentPath = this.router.url.split('?')[0];
-        if (currentPath === '/login' || currentPath === '/landing') {
-          return;
-        }
-
-        if (autoRedirect) {
-          this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
-        } else {
-          this.router.navigate(['/login']);
-        }
+        this.router.navigate(['/']);
       }),
       catchError(() => {
         // Even if server call fails, clear local state
@@ -211,17 +300,7 @@ export class AuthService {
         localStorage.removeItem('auth_timestamp');
         this.currentUser.set(null);
         this.isAuthenticated.set(false);
-        
-        const currentPath = this.router.url.split('?')[0];
-        if (currentPath === '/login' || currentPath === '/landing') {
-          return of(null);
-        }
-
-        if (autoRedirect) {
-          this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
-        } else {
-          this.router.navigate(['/login']);
-        }
+        this.router.navigate(['/']);
         return of(null);
       })
     );
@@ -235,7 +314,16 @@ export class AuthService {
       this.currentUser.set(null);
       this.isAuthenticated.set(false);
       const currentPath = this.router.url.split('?')[0];
-      if (currentPath !== '/login' && currentPath !== '/landing' && currentPath !== '/') {
+      const isPublic = 
+        currentPath === '/login' ||
+        currentPath === '/signup' ||
+        currentPath === '/landing' ||
+        currentPath === '/' ||
+        currentPath === '/showcase' ||
+        currentPath === '/listings' ||
+        currentPath.startsWith('/listings/');
+
+      if (!isPublic) {
         this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
       }
       return;

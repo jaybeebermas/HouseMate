@@ -1,0 +1,10 @@
+input CreateListingInput {
+  category: String!
+  price: Float!
+  details: String!
+  latitude: Float!
+  longitude: Float!
+  address: String!
+  images: [String!]!
+  cover_image: String!
+}

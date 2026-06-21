@@ -1,18 +1,46 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login/login.component';
+import { SignupComponent } from './features/auth/signup/signup.component';
 import { adminRoutes } from './admin/admin.routes';
 import { authGuard } from './shared/guards/auth.guard';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'signup', component: SignupComponent },
   {
     path: 'admin',
     canActivate: [authGuard],
     children: adminRoutes
   },
   {
+    path: 'become-landlord',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/landlord/become-landlord/become-landlord.component').then(m => m.BecomeLandlordComponent)
+  },
+  {
+    path: 'landlord/post',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/landlord/landlord-post/landlord-post.component').then(m => m.LandlordPostComponent)
+  },
+  {
+    path: 'listings',
+    loadComponent: () => import('./features/listings/browse-listings/browse-listings.component').then(m => m.BrowseListingsComponent)
+  },
+  {
+    path: 'listings/:id',
+    loadComponent: () => import('./features/listings/listing-details/listing-details.component').then(m => m.ListingDetailsComponent)
+  },
+  {
+    path: 'login-required',
+    loadComponent: () => import('./features/auth/login-required/login-required.component').then(m => m.LoginRequiredComponent)
+  },
+  {
     path: 'landing',
     loadComponent: () => import('./features/landing/landing.component').then(m => m.LandingComponent)
+  },
+  {
+    path: 'showcase',
+    loadComponent: () => import('./shared/components/ui/showcase/showcase.component').then(m => m.ShowcaseComponent)
   },
   {
     path: '',
