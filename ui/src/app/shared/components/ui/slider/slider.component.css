@@ -1,0 +1,16 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+::ng-deep .custom-slider.mat-mdc-slider {
+  --mdc-slider-inactive-track-color: #e4e4e7;
+  --mdc-slider-active-track-color: #0d9488;
+  
+  --mdc-slider-handle-color: #0d9488;
+  --mdc-slider-focus-handle-color: #0d9488;
+  --mdc-slider-hover-handle-color: #0d9488;
+  
+  --mdc-slider-value-indicator-text-color: #ffffff;
+  --mdc-slider-value-indicator-container-color: #0d9488;
+}

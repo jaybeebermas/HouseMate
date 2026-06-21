@@ -1,14 +1,15 @@
 import { Component, inject, signal, HostListener, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '../../services/auth/auth.service';
+import { ToastService } from '../../services/toast/toast.service';
 import { SearchOverlayComponent } from '../../shared/components/ui/search-overlay/search-overlay.component';
 import { GraphqlService } from '../../services/graphql/graphql.service';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, SearchOverlayComponent],
+  imports: [CommonModule, SearchOverlayComponent, RouterLink],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
@@ -20,6 +21,10 @@ export class LandingComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
 
   public readonly showDropdown = signal(false);
+
+  onPostRoom(): void {
+    this.router.navigate(['/landlord/post']);
+  }
   public readonly showSearch = signal(typeof localStorage !== 'undefined' ? localStorage.getItem('search_overlay_open') === 'true' : false);
 
   public featuredListings: any[] = [];
