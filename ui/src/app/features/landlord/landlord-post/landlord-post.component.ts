@@ -1,9 +1,11 @@
-import { Component, ElementRef, ViewChild, inject, signal, computed, AfterViewInit, NgZone } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject, signal, computed, AfterViewInit, NgZone, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import { ToastService } from '../../../services/toast/toast.service';
+import { SelectComponent } from '../../../shared/components/ui/select/select.component';
+import { AutocompleteComponent } from '../../../shared/components/ui/autocomplete/autocomplete.component';
 
 declare var google: any;
 
@@ -15,7 +17,7 @@ interface UploadedImage {
 @Component({
   selector: 'app-landlord-post',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, SelectComponent, AutocompleteComponent],
   templateUrl: './landlord-post.component.html',
   styleUrl: './landlord-post.component.css'
 })
@@ -25,6 +27,7 @@ export class LandlordPostComponent implements AfterViewInit {
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
   private readonly ngZone = inject(NgZone);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @ViewChild('mapContainer') mapElement!: ElementRef;
   @ViewChild('editorArea') editorArea!: ElementRef;
@@ -38,30 +41,21 @@ export class LandlordPostComponent implements AfterViewInit {
   coverImageName = signal<string | null>(null);
   isDragging = signal(false);
 
-  // Landmark Searchable Dropdown state
-  showLandmarks = signal(false);
-  landmarkSearchQuery = signal('');
-  
-  landmarks = [
-    { name: 'UST (University of Santo Tomas), Sampaloc, Manila', lat: 14.6098, lng: 120.9896 },
-    { name: 'DLSU (De La Salle University), Taft Ave, Manila', lat: 14.5648, lng: 120.9932 },
-    { name: 'UP Diliman, Quezon City', lat: 14.6537, lng: 121.0685 },
-    { name: 'Ateneo de Manila University, Katipunan, Quezon City', lat: 14.6396, lng: 121.0778 },
-    { name: 'FEU (Far Eastern University), Sampaloc, Manila', lat: 14.6042, lng: 120.9873 },
-    { name: 'Mapua University, Intramuros, Manila', lat: 14.5905, lng: 120.9781 },
-    { name: 'PUP (Polytechnic University of the Philippines), Sta. Mesa, Manila', lat: 14.5979, lng: 121.0109 },
-    { name: 'National University, Sampaloc, Manila', lat: 14.6045, lng: 120.9946 },
-    { name: 'U-Belt (University Belt), Recto Ave, Manila', lat: 14.6019, lng: 120.9892 },
-    { name: 'Taft Avenue, Malate, Manila', lat: 14.5701, lng: 120.9918 }
+  // Category wrapper configuration
+  categoryOptions = [
+    { name: 'Private Room', value: 'room' },
+    { name: 'Apartment', value: 'apartment' },
+    { name: 'Bedspace', value: 'bedspace' },
+    { name: 'House for Rent', value: 'house' }
   ];
 
-  filteredLandmarks = computed(() => {
-    const query = this.landmarkSearchQuery().toLowerCase().trim();
-    if (!query) return this.landmarks;
-    return this.landmarks.filter(l => l.name.toLowerCase().includes(query));
-  });
+  // Landmark Searchable Dropdown state
+  autocompleteQuery = signal('');
+  landmarks = signal<any[]>([]);
 
-  // Google Map objects
+  filteredLandmarksForAutocomplete = computed(() => this.landmarks());
+
+  // Leaflet Map objects
   private map: any;
   private marker: any;
 
@@ -74,109 +68,156 @@ export class LandlordPostComponent implements AfterViewInit {
       latitude: [14.5995, [Validators.required]],
       longitude: [120.9842, [Validators.required]]
     });
+
+    // Automatically update coordinates and center map if address matches a fetched landmark
+    this.postForm.get('address')?.valueChanges.subscribe(val => {
+      if (val) {
+        const match = this.landmarks().find(l => l.name === val);
+        if (match) {
+          this.postForm.patchValue({
+            latitude: match.lat,
+            longitude: match.lng
+          }, { emitEvent: false }); // avoid infinite loops
+          
+          if (this.map && this.marker) {
+            const latLng = [match.lat, match.lng];
+            this.map.setView(latLng, 16);
+            this.marker.setLatLng(latLng);
+          }
+          this.cdr.detectChanges();
+        }
+      }
+    });
   }
 
   ngAfterViewInit(): void {
-    this.loadGoogleMapsScript()
+    this.loadLeaflet()
       .then(() => {
-        this.initMap();
+        this.initLeafletMap();
       })
       .catch((err) => {
-        console.error('Google Maps API failed to load:', err);
+        console.error('Leaflet failed to load:', err);
         this.toastService.show('Unable to load interactive maps.', 'error', 'Maps Load Error');
+        this.showMapFallback();
       });
   }
 
-  // Load Google Maps API script dynamically
-  private loadGoogleMapsScript(): Promise<void> {
-    if (typeof window !== 'undefined' && (window as any).google && (window as any).google.maps) {
+  // Load Leaflet CSS and JS dynamically from CDN
+  private loadLeaflet(): Promise<void> {
+    if (typeof window !== 'undefined' && (window as any).L) {
       return Promise.resolve();
     }
     return new Promise((resolve, reject) => {
+      // Load CSS
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(link);
+
+      // Load JS
       const script = document.createElement('script');
-      script.src = 'https://maps.googleapis.com/maps/api/js';
-      script.async = true;
-      script.defer = true;
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
       script.onload = () => resolve();
       script.onerror = (e) => reject(e);
       document.head.appendChild(script);
     });
   }
 
-  // Initialize Map
-  private initMap(): void {
+  private showMapFallback(): void {
+    if (this.mapElement) {
+      this.mapElement.nativeElement.innerHTML = `
+        <div class="flex flex-col items-center justify-center h-full bg-slate-50 border border-slate-200/80 p-6 text-center select-none">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-slate-400 mb-2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8m-3-4h.008v.008H12V11.25zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p class="text-xs font-bold text-slate-700">Offline / Demo Mode</p>
+          <p class="text-[10px] text-slate-500 mt-1 max-w-xs">Interactive maps are currently disabled. The default location coordinates will still be saved on submission.</p>
+        </div>
+      `;
+    }
+  }
+
+  // Initialize Leaflet Map with OpenStreetMap
+  private initLeafletMap(): void {
+    const L = (window as any).L;
     const lat = this.postForm.get('latitude')?.value || 14.5995;
     const lng = this.postForm.get('longitude')?.value || 120.9842;
-    const centerPoint = { lat, lng };
+    const centerPoint = [lat, lng];
 
-    this.map = new google.maps.Map(this.mapElement.nativeElement, {
-      center: centerPoint,
-      zoom: 13,
-      disableDefaultUI: false,
-      mapTypeControl: false,
-      streetViewControl: false,
-      fullscreenControl: false,
-      styles: [
-        {
-          "featureType": "administrative",
-          "elementType": "geometry",
-          "stylers": [{ "visibility": "off" }]
-        },
-        {
-          "featureType": "poi",
-          "stylers": [{ "visibility": "off" }]
-        },
-        {
-          "featureType": "road",
-          "elementType": "labels.icon",
-          "stylers": [{ "visibility": "off" }]
-        },
-        {
-          "featureType": "transit",
-          "stylers": [{ "visibility": "off" }]
-        }
-      ]
+    this.map = L.map(this.mapElement.nativeElement).setView(centerPoint, 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(this.map);
+
+    // Custom modern marker with brand primary color teal
+    const customIcon = L.divIcon({
+      className: 'custom-leaflet-marker',
+      html: `
+        <div class="flex items-center justify-center w-8 h-8 rounded-full bg-teal-600 border-2 border-white shadow-lg text-white animate-bounce">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+            <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.302.054c.122 0 .244-.03.354-.088l.026-.013c.047-.025.11-.06.186-.105.15-.09.386-.24.673-.467.574-.456 1.399-1.159 2.206-1.996C17.788 17.65 20 14.61 20 11.5a8 8 0 10-16 0c0 3.11 2.212 6.15 4.606 8.599a31.03 31.03 0 003.02 2.651c.287.228.522.376.674.467a1.956 1.956 0 00.187.106.377.377 0 00.046.023zM12 14a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+          </svg>
+        </div>
+      `,
+      iconSize: [32, 32],
+      iconAnchor: [16, 32]
     });
 
-    this.marker = new google.maps.Marker({
-      position: centerPoint,
-      map: this.map,
+    this.marker = L.marker(centerPoint, {
       draggable: true,
-      animation: google.maps.Animation.DROP
-    });
+      icon: customIcon
+    }).addTo(this.map);
 
     // Handle pin drag coordinates update
-    this.marker.addListener('dragend', () => {
+    this.marker.on('dragend', () => {
+      const position = this.marker.getLatLng();
       this.ngZone.run(() => {
-        const position = this.marker.getPosition();
-        this.updateCoordinates(position.lat(), position.lng());
-        this.reverseGeocode(position.lat(), position.lng());
+        this.updateCoordinates(position.lat, position.lng);
+        this.reverseGeocode(position.lat, position.lng);
       });
     });
 
     // Handle map click to drop pin
-    this.map.addListener('click', (event: any) => {
+    this.map.on('click', (event: any) => {
+      const position = event.latlng;
+      this.marker.setLatLng(position);
       this.ngZone.run(() => {
-        const latLng = event.latLng;
-        this.marker.setPosition(latLng);
-        this.updateCoordinates(latLng.lat(), latLng.lng());
-        this.reverseGeocode(latLng.lat(), latLng.lng());
+        this.updateCoordinates(position.lat, position.lng);
+        this.reverseGeocode(position.lat, position.lng);
       });
     });
+
+    // Handle initial reverse geocoding if address is empty
+    if (!this.postForm.get('address')?.value) {
+      this.reverseGeocode(lat, lng);
+    }
   }
 
-  // Reverse Geocoding via coordinates
+  // Reverse Geocoding via coordinates using OpenStreetMap Nominatim API
   private reverseGeocode(lat: number, lng: number): void {
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ location: { lat, lng } }, (results: any, status: any) => {
-      this.ngZone.run(() => {
-        if (status === 'OK' && results[0]) {
-          this.postForm.patchValue({
-            address: results[0].formatted_address
-          });
-        }
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
+    fetch(url, {
+      headers: {
+        'Accept-Language': 'en-US,en;q=0.9',
+        'User-Agent': 'HouseMate-CoLiving-App'
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        this.ngZone.run(() => {
+          if (data && data.display_name) {
+            this.postForm.patchValue({
+              address: data.display_name
+            });
+            this.cdr.detectChanges();
+          }
+        });
+      })
+      .catch(err => {
+        console.error('Reverse geocoding error:', err);
       });
-    });
   }
 
   private updateCoordinates(lat: number, lng: number): void {
@@ -186,35 +227,38 @@ export class LandlordPostComponent implements AfterViewInit {
     });
   }
 
-  // Address search manual input changes
-  onAddressInput(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.landmarkSearchQuery.set(value);
-    this.showLandmarks.set(true);
-    this.postForm.patchValue({ address: value });
-  }
-
-  hideLandmarksWithDelay(): void {
-    setTimeout(() => {
-      this.showLandmarks.set(false);
-    }, 250);
-  }
-
-  selectLandmark(landmark: { name: string, lat: number, lng: number }): void {
-    this.postForm.patchValue({
-      address: landmark.name,
-      latitude: landmark.lat,
-      longitude: landmark.lng
-    });
-    this.landmarkSearchQuery.set('');
-    this.showLandmarks.set(false);
-
-    if (this.map && this.marker) {
-      const latLng = { lat: landmark.lat, lng: landmark.lng };
-      this.map.setCenter(latLng);
-      this.map.setZoom(16);
-      this.marker.setPosition(latLng);
+  onAutocompleteQueryChange(query: string): void {
+    const trimmed = query.trim();
+    if (trimmed.length < 3) {
+      this.landmarks.set([]);
+      return;
     }
+
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(trimmed)}&limit=5&countrycodes=ph`;
+    fetch(url, {
+      headers: {
+        'Accept-Language': 'en-US,en;q=0.9',
+        'User-Agent': 'HouseMate-CoLiving-App'
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        this.ngZone.run(() => {
+          if (Array.isArray(data)) {
+            const results = data.map((item: any) => ({
+              name: item.display_name,
+              value: item.display_name,
+              lat: parseFloat(item.lat),
+              lng: parseFloat(item.lon)
+            }));
+            this.landmarks.set(results);
+            this.cdr.detectChanges();
+          }
+        });
+      })
+      .catch(err => {
+        console.error('Nominatim API error:', err);
+      });
   }
 
   // Use My Location Browser Geolocation API
@@ -226,17 +270,17 @@ export class LandlordPostComponent implements AfterViewInit {
           this.ngZone.run(() => {
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
-            const latLng = { lat, lng };
+            const latLng = [lat, lng];
 
             if (this.map && this.marker) {
-              this.map.setCenter(latLng);
-              this.map.setZoom(16);
-              this.marker.setPosition(latLng);
+              this.map.setView(latLng, 16);
+              this.marker.setLatLng(latLng);
             }
             
             this.updateCoordinates(lat, lng);
             this.reverseGeocode(lat, lng);
             this.toastService.show('Current location Pinpointed!', 'success', 'Location Detected');
+            this.cdr.detectChanges();
           });
         },
         (error) => {
