@@ -1,0 +1,29 @@
+:host {
+  display: inline-block;
+}
+
+::ng-deep .custom-slide-toggle.mat-mdc-slide-toggle {
+  --mdc-switch-selected-icon-color: #ffffff;
+  --mdc-switch-disabled-selected-handle-color: #ffffff;
+  --mdc-switch-disabled-unselected-handle-color: #e4e4e7;
+  
+  /* Primary selected track and thumb color overrides (Teal / primary-600 #0d9488) */
+  --mdc-switch-selected-focus-handle-color: #0d9488;
+  --mdc-switch-selected-hover-handle-color: #0d9488;
+  --mdc-switch-selected-pressed-handle-color: #0d9488;
+  --mdc-switch-selected-handle-color: #0d9488;
+  --mdc-switch-selected-focus-track-color: #99f6e4;
+  --mdc-switch-selected-hover-track-color: #99f6e4;
+  --mdc-switch-selected-pressed-track-color: #99f6e4;
+  --mdc-switch-selected-track-color: #5eead4;
+
+  /* Unselected overrides */
+  --mdc-switch-unselected-focus-handle-color: #a1a1aa;
+  --mdc-switch-unselected-hover-handle-color: #a1a1aa;
+  --mdc-switch-unselected-pressed-handle-color: #a1a1aa;
+  --mdc-switch-unselected-handle-color: #d4d4d8;
+  --mdc-switch-unselected-focus-track-color: #e4e4e7;
+  --mdc-switch-unselected-hover-track-color: #e4e4e7;
+  --mdc-switch-unselected-pressed-track-color: #e4e4e7;
+  --mdc-switch-unselected-track-color: #e4e4e7;
+}
