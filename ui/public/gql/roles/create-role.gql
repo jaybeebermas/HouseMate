@@ -1,0 +1,12 @@
+mutation CreateRole($input: CreateRoleInput!) {
+  createRole(input: $input) {
+    id
+    name
+    guard_name
+    permissions {
+      id
+      name
+    }
+    users_count
+  }
+}

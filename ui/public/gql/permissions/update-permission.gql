@@ -1,0 +1,7 @@
+mutation UpdatePermission($input: UpdatePermissionInput!) {
+  updatePermission(input: $input) {
+    id
+    name
+    guard_name
+  }
+}

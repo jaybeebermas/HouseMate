@@ -1,0 +1,12 @@
+query GetRoles {
+  roles {
+    id
+    name
+    guard_name
+    permissions {
+      id
+      name
+    }
+    users_count
+  }
+}
