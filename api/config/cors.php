@@ -21,7 +21,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => explode(',', env('ALLOWED_ORIGINS', 'http://localhost,http://localhost:4200,127.0.0.1')),
+    'allowed_origins' => explode(',', env('ALLOWED_ORIGINS', 'http://localhost,http://localhost:4200,127.0.0.1,https://housemate-flax.vercel.app')),
 
     'allowed_origins_patterns' => [],
 
