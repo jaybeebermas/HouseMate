@@ -45,6 +45,12 @@ class PermissionSeeder extends Seeder
                 []
             );
 
+            // Create Landlord Role (no admin permissions by default)
+            $roleModelClass::query()->updateOrCreate(
+                ['name' => 'landlord', 'guard_name' => $guardName],
+                []
+            );
+
             // Assign Permissions
             $superAdmin->syncPermissions($permissionsList);
             $admin->syncPermissions($permissionsList);

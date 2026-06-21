@@ -1,0 +1,322 @@
+<div class="min-h-screen bg-[#F4F6F9] font-sans antialiased text-[#485366] flex flex-col justify-between">
+  
+  <!-- Navigation Header -->
+  <header class="w-full bg-white border-b border-slate-200/80 shadow-sm sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a routerLink="/" class="flex items-center gap-2 group">
+        <img src="/login.png" class="w-9 h-9 rounded-lg object-cover shadow-sm transition-transform group-hover:scale-105" alt="Logo" />
+        <span class="text-xl font-bold tracking-tight text-[#18305E]">HouseMate</span>
+      </a>
+      <a routerLink="/" class="text-sm font-semibold text-[#18305E] hover:text-[#679AFA] transition-colors flex items-center gap-1.5 cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        Back to Home
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Wizard Content -->
+  <main class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-2xl bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden p-6 sm:p-10 transition-all duration-300">
+      
+      <!-- Normal Form View (Before submission) -->
+      <ng-container *ngIf="!isSubmitted(); else successState">
+        
+        <!-- Step Title Header -->
+        <div class="text-center mb-8">
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-[#18305E] tracking-tight">Become a Landlord</h1>
+          <p class="text-sm text-[#727272] mt-1.5">Follow the steps below to upgrade your profile and list co-living rooms.</p>
+        </div>
+
+        <!-- Wizard Progress Bar -->
+        <div class="relative flex justify-between items-center mb-10 max-w-md mx-auto">
+          <!-- Background Line -->
+          <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-100 rounded z-0"></div>
+          <!-- Colored Progress Line -->
+          <div class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#18305E] transition-all duration-300 rounded z-0"
+               [style.width.%]="(currentStep() - 1) * 50"></div>
+
+          <!-- Step 1 Dot -->
+          <button (click)="goToStep(1)" class="relative z-10 w-9 h-9 rounded-full flex items-center justify-center border-2 font-bold text-sm transition-all focus:outline-none cursor-pointer"
+                  [ngClass]="currentStep() >= 1 ? 'bg-[#18305E] border-[#18305E] text-white' : 'bg-white border-slate-200 text-slate-400'">
+            1
+            <span class="absolute top-11 whitespace-nowrap text-[10px] font-bold uppercase tracking-wider text-slate-500 hidden sm:block">Contact Info</span>
+          </button>
+
+          <!-- Step 2 Dot -->
+          <button (click)="goToStep(2)" class="relative z-10 w-9 h-9 rounded-full flex items-center justify-center border-2 font-bold text-sm transition-all focus:outline-none cursor-pointer"
+                  [ngClass]="currentStep() >= 2 ? 'bg-[#18305E] border-[#18305E] text-white' : 'bg-white border-slate-200 text-slate-400'">
+            2
+            <span class="absolute top-11 whitespace-nowrap text-[10px] font-bold uppercase tracking-wider text-slate-500 hidden sm:block">Upload ID</span>
+          </button>
+
+          <!-- Step 3 Dot -->
+          <button (click)="goToStep(3)" class="relative z-10 w-9 h-9 rounded-full flex items-center justify-center border-2 font-bold text-sm transition-all focus:outline-none cursor-pointer"
+                  [ngClass]="currentStep() >= 3 ? 'bg-[#18305E] border-[#18305E] text-white' : 'bg-white border-slate-200 text-slate-400'">
+            3
+            <span class="absolute top-11 whitespace-nowrap text-[10px] font-bold uppercase tracking-wider text-slate-500 hidden sm:block">Agreement</span>
+          </button>
+        </div>
+
+        <!-- Form content -->
+        <form [formGroup]="landlordForm" (ngSubmit)="onSubmit()" class="mt-8 space-y-6">
+          
+          <!-- STEP 1: Phone Number -->
+          <div *ngIf="currentStep() === 1" class="space-y-4 animate-fade-in">
+            <div class="text-left">
+              <label for="phoneNumber" class="block text-sm font-bold text-[#18305E] mb-2">Phone Number</label>
+              <div class="relative rounded-lg shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <!-- Phone Icon SVG -->
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                    <path fill-rule="evenodd" d="M1.5 4.5a3 3 0 0 1 3-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 0 1-.694 1.955l-1.293.97c-.135.101-.18.282-.108.43a12.49 12.49 0 0 0 5.42 5.42c.147.072.328.027.43-.108l.97-1.293a1.875 1.875 0 0 1 1.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 0 1-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5Z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <input 
+                  type="text" 
+                  id="phoneNumber" 
+                  formControlName="phoneNumber"
+                  placeholder="e.g. 09171234567" 
+                  class="w-full pl-11 pr-4 py-3 bg-white border rounded-lg focus:ring-2 focus:ring-[#18305E]/20 focus:border-[#18305E] outline-none transition-all font-semibold"
+                  [ngClass]="landlordForm.get('phoneNumber')?.touched && landlordForm.get('phoneNumber')?.invalid ? 'border-red-500' : 'border-slate-200'"
+                />
+              </div>
+              
+              <!-- Validation Errors -->
+              <div *ngIf="landlordForm.get('phoneNumber')?.touched && landlordForm.get('phoneNumber')?.invalid" class="text-xs text-red-500 mt-2 font-semibold">
+                <span *ngIf="landlordForm.get('phoneNumber')?.errors?.['required']">Phone number is required.</span>
+                <span *ngIf="landlordForm.get('phoneNumber')?.errors?.['pattern']">Please enter a valid Philippine mobile number (e.g. 09171234567).</span>
+              </div>
+              
+              <div class="mt-4 bg-slate-50 border border-slate-200 rounded-lg p-4 flex gap-3 text-left">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-[#679AFA] shrink-0 mt-0.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 11.263 1.417l-.14.07-.15-.03a.75.75 0 01-.157-1.442h.015L11.25 11.25zm.002-3.75a.75.75 0 11-.002 1.5.75.75 0 010-1.5zM12 18.75a6.75 6.75 0 100-13.5 6.75 6.75 0 000 13.5z" />
+                </svg>
+                <div class="text-xs text-slate-500 leading-relaxed">
+                  <p class="font-bold text-[#18305E] mb-0.5">Why we need your phone number?</p>
+                  We use your phone number to allow matching housemates or potential tenants to contact you after you publish a listing. It will only be visible to logged-in and verified users.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2: Valid ID Upload -->
+          <div *ngIf="currentStep() === 2" class="space-y-4 animate-fade-in">
+            <div class="text-left">
+              <label class="block text-sm font-bold text-[#18305E] mb-2">Upload a Valid Government ID</label>
+              <p class="text-xs text-slate-500 mb-4">Provide any government-issued ID (e.g. Driver's License, Passport, UMID, Student ID) to register.</p>
+
+              <!-- Drag & Drop Zone -->
+              <div 
+                (dragover)="onDragOver($event)"
+                (dragleave)="onDragLeave($event)"
+                (drop)="onDrop($event)"
+                (click)="fileInput.click()"
+                class="w-full min-h-[220px] rounded-xl border-2 border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all select-none relative"
+                [ngClass]="{
+                  'border-[#18305E] bg-[#18305E]/5': isDragging(),
+                  'border-slate-200 hover:border-[#18305E] hover:bg-slate-50': !isDragging() && !selectedFileName(),
+                  'border-green-500 bg-green-50/10': !isDragging() && selectedFileName()
+                }"
+              >
+                <!-- Input trigger -->
+                <input 
+                  type="file" 
+                  #fileInput 
+                  (change)="onFileSelected($event)" 
+                  class="hidden" 
+                  accept="image/jpeg,image/png,image/webp,application/pdf"
+                />
+
+                <!-- Upload State (Empty) -->
+                <ng-container *ngIf="!selectedFileName(); else fileSelectedState">
+                  <!-- Upload Icon -->
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-12 h-12 text-slate-400 mb-3 upload-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                  </svg>
+                  <p class="text-sm font-bold text-[#18305E]">Drag & Drop your ID file here</p>
+                  <p class="text-xs text-slate-400 mt-1">or click to browse from device</p>
+                  <p class="text-[10px] text-slate-400 mt-3 font-semibold">Supports JPG, PNG, WEBP, or PDF up to 5MB</p>
+                </ng-container>
+
+                <!-- File Selected State -->
+                <ng-template #fileSelectedState>
+                  <div class="flex items-center gap-4 bg-white border border-slate-200/80 p-4 rounded-lg shadow-sm max-w-md w-full relative z-10">
+                    <div class="w-10 h-10 bg-[#CEEBFF] text-[#18305E] rounded-lg flex items-center justify-center shrink-0">
+                      <!-- ID Badge Icon -->
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                      </svg>
+                    </div>
+                    <div class="flex-grow min-w-0 text-left">
+                      <p class="text-xs font-bold text-[#18305E] truncate">{{ selectedFileName() }}</p>
+                      <p class="text-[10px] text-slate-400 mt-0.5">{{ selectedFileSize() }} • File Uploaded</p>
+                    </div>
+                    <button (click)="removeFile($event)" class="w-8 h-8 rounded-lg hover:bg-red-50 text-red-500 flex items-center justify-center shrink-0 transition-colors focus:outline-none cursor-pointer">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                      </svg>
+                    </button>
+                  </div>
+                </ng-template>
+              </div>
+
+              <!-- Info text about security -->
+              <div class="mt-4 bg-slate-50 border border-slate-200 rounded-lg p-4 flex gap-3 text-left">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-[#679AFA] shrink-0 mt-0.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                </svg>
+                <div class="text-xs text-slate-500 leading-relaxed">
+                  <p class="font-bold text-[#18305E] mb-0.5">Privacy & Encryption Guaranteed</p>
+                  Your identification document is stored in a secure folder, strictly used for verification purposes. It will never be shared, sold, or displayed publicly.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3: Terms & Agreement -->
+          <div *ngIf="currentStep() === 3" class="space-y-4 animate-fade-in">
+            <div class="text-left">
+              <label class="block text-sm font-bold text-[#18305E] mb-2">Terms and Conditions for Landlords</label>
+              <p class="text-xs text-slate-500 mb-4">Please review and agree to our Landlord Terms of Service to finalize your profile.</p>
+
+              <!-- Scrollable Terms Agreement Box -->
+              <div class="w-full h-44 overflow-y-auto border border-slate-200 bg-slate-50 rounded-lg p-4 text-xs text-slate-500 space-y-3 scroll-terms mb-4 leading-relaxed">
+                <p class="font-bold text-[#18305E]">1. Accuracy of Listings</p>
+                <p>As a registered landlord on HouseMate, you agree that all information, images, rates, and amenities provided in your co-living space listings are accurate, authentic, and not misleading. You must update room availability promptly.</p>
+                
+                <p class="font-bold text-[#18305E]">2. Safety & Code of Conduct</p>
+                <p>You agree to maintain a safe, clean, and cooperative co-living environment for all student tenants. Discrimination of any form based on race, gender, background, or university affiliation is strictly prohibited.</p>
+
+                <p class="font-bold text-[#18305E]">3. Fair Rental Pricing</p>
+                <p>You guarantee that you will abide by local residential rental laws, deposit collection standards, and coordinate expense/bill splitting fairly as agreed in the roommates/tenancy contract.</p>
+
+                <p class="font-bold text-[#18305E]">4. Tenant Privacy</p>
+                <p>You respect student renter privacy. Random inspections without prior notice of at least 24 hours are not allowed, unless in cases of extreme emergencies or safety threats.</p>
+              </div>
+
+              <!-- Checkbox -->
+              <div class="flex items-start gap-3 mt-4">
+                <input 
+                  type="checkbox" 
+                  id="agree" 
+                  formControlName="agree"
+                  class="mt-1 w-4 h-4 rounded text-[#18305E] focus:ring-[#18305E] border-slate-300 cursor-pointer"
+                />
+                <label for="agree" class="text-sm font-semibold text-slate-600 select-none cursor-pointer leading-snug">
+                  I agree to the landlord terms, code of conduct, and verify that the uploaded ID is valid and belongs to me.
+                </label>
+              </div>
+              
+              <!-- Validation Errors -->
+              <div *ngIf="landlordForm.get('agree')?.touched && landlordForm.get('agree')?.invalid" class="text-xs text-red-500 mt-2 font-semibold">
+                You must agree to the terms to proceed.
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions / Wizard Buttons -->
+          <div class="flex items-center justify-between border-t border-slate-100 pt-6 mt-8">
+            <button 
+              type="button"
+              (click)="prevStep()"
+              *ngIf="currentStep() > 1"
+              class="px-5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold rounded-lg transition-all focus:outline-none cursor-pointer text-sm"
+            >
+              Previous Step
+            </button>
+            <div *ngIf="currentStep() === 1"></div> <!-- Spacer -->
+
+            <!-- Next Button for step 1 & 2 -->
+            <button 
+              type="button"
+              (click)="nextStep()"
+              *ngIf="currentStep() < 3"
+              class="px-6 py-2.5 bg-[#18305E] hover:bg-[#254685] text-white font-bold rounded-lg transition-all focus:outline-none cursor-pointer text-sm flex items-center gap-1.5 ml-auto"
+            >
+              Next Step
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+              </svg>
+            </button>
+
+            <!-- Submit Button for step 3 -->
+            <button 
+              type="submit"
+              *ngIf="currentStep() === 3"
+              [disabled]="landlordForm.invalid || isLoading()"
+              class="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition-all focus:outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2 ml-auto shadow-md"
+            >
+              <span *ngIf="isLoading()" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+              {{ isLoading() ? 'Registering...' : 'Register as Landlord' }}
+            </button>
+          </div>
+
+        </form>
+
+      </ng-container>
+
+      <!-- SUCCESS STATE -->
+      <ng-template #successState>
+        <div class="text-center py-10 space-y-6 animate-fade-in-up">
+          
+          <!-- Animated success checkmark -->
+          <div class="mx-auto w-20 h-20 bg-green-50 text-green-600 rounded-full flex items-center justify-center shadow-inner success-checkmark">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-10 h-10 animate-bounce">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+          </div>
+
+          <div class="space-y-2">
+            <h2 class="text-3xl font-extrabold text-[#18305E]">Congratulations, Landlord!</h2>
+            <p class="text-sm text-[#727272] max-w-md mx-auto">
+              Your profile has been successfully upgraded. You are now registered as a Landlord on HouseMate!
+            </p>
+          </div>
+
+          <div class="max-w-md mx-auto bg-slate-50 border border-slate-200/80 rounded-xl p-6 text-left space-y-4">
+            <h3 class="text-xs font-bold text-[#18305E] uppercase tracking-wider">What you can do now:</h3>
+            <ul class="space-y-3 text-xs text-[#485366]">
+              <li class="flex gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-green-500 shrink-0">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span><strong>List Your Shared Rooms</strong>: Post student-friendly co-living slots, add location details, and upload premium room photos.</span>
+              </li>
+              <li class="flex gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-green-500 shrink-0">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span><strong>Find Renters & Roommates</strong>: Review student profiles, match based on co-living compatibility, and message them.</span>
+              </li>
+              <li class="flex gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-green-500 shrink-0">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span><strong>Verified Status</strong>: Potential renters will see you as a <strong>Verified Host</strong>, boosting your listing views.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row justify-center gap-3">
+            <button 
+              (click)="goBackHome()"
+              class="px-8 py-3 bg-[#18305E] hover:bg-[#254685] text-white font-bold rounded-lg transition-colors focus:outline-none cursor-pointer text-sm shadow-md"
+            >
+              Back to Homepage
+            </button>
+          </div>
+
+        </div>
+      </ng-template>
+
+    </div>
+  </main>
+
+  <!-- Simple Footer -->
+  <footer class="py-6 border-t border-slate-200/50 bg-[#F8F9FA] text-center text-xs text-slate-400 select-none">
+    © 2026 HouseMate Landlord Registration Portal. All rights reserved.
+  </footer>
+
+</div>

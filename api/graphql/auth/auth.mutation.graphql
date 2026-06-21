@@ -2,3 +2,4 @@ login(input: LoginInput! @spread): LoginResponse! @field(resolver: "App\\GraphQL
 register(input: RegisterInput! @spread): LoginResponse! @field(resolver: "App\\GraphQL\\Mutations\\Auth\\AuthMutation@register")
 loginWithGoogle(token: String!): LoginResponse! @field(resolver: "App\\GraphQL\\Mutations\\Auth\\AuthMutation@loginWithGoogle")
 logout: LogoutResponse! @field(resolver: "App\\GraphQL\\Mutations\\Auth\\AuthMutation@logout")
+becomeLandlord(input: BecomeLandlordInput! @spread): BecomeLandlordResponse! @guard @field(resolver: "App\\GraphQL\\Mutations\\Auth\\AuthMutation@becomeLandlord")

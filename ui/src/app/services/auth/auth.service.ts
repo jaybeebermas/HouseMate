@@ -12,6 +12,8 @@ export interface User {
   email: string;
   role: string;
   permissions?: string[];
+  phone_number?: string;
+  valid_id?: string;
 }
 
 @Injectable({
@@ -172,6 +174,40 @@ export class AuthService {
           localStorage.setItem('auth_timestamp', Date.now().toString());
           this.currentUser.set(data.user);
           this.isAuthenticated.set(true);
+        }
+      })
+    );
+  }
+
+  becomeLandlord(phoneNumber: string, validIdName: string): Observable<any> {
+    const query = `
+      mutation BecomeLandlord($phoneNumber: String!, $validIdName: String!) {
+        becomeLandlord(input: { phone_number: $phoneNumber, valid_id_name: $validIdName }) {
+          status
+          message
+          user {
+            id
+            username
+            first_name
+            last_name
+            email
+            role
+            permissions
+            phone_number
+            valid_id
+          }
+        }
+      }
+    `;
+
+    return this.http.post<any>(this.apiUrl, {
+      query,
+      variables: { phoneNumber, validIdName }
+    }).pipe(
+      tap(response => {
+        const data = response.data?.becomeLandlord;
+        if (data && data.status === 'SUCCESS' && data.user) {
+          this.currentUser.set(data.user);
         }
       })
     );

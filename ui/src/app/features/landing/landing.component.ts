@@ -1,21 +1,27 @@
 import { Component, inject, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '../../services/auth/auth.service';
+import { ToastService } from '../../services/toast/toast.service';
 import { SearchOverlayComponent } from '../../shared/components/ui/search-overlay/search-overlay.component';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, SearchOverlayComponent],
+  imports: [CommonModule, SearchOverlayComponent, RouterLink],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
 export class LandingComponent {
   public readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
 
   public readonly showDropdown = signal(false);
+
+  onPostRoom(): void {
+    this.toastService.show('The Post Room feature is under development. Get ready to list your co-living spaces soon!', 'info', 'Coming Soon');
+  }
   public readonly showSearch = signal(typeof localStorage !== 'undefined' ? localStorage.getItem('search_overlay_open') === 'true' : false);
 
   public readonly featuredListings = [
