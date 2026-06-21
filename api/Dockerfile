@@ -43,4 +43,4 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 EXPOSE 80
 
 # Start Apache with migrations, seeding, and cache clearing
-CMD sh -c "php artisan migrate --seed --force && php artisan optimize:clear && php artisan lighthouse:cache-clear && php artisan cache:clear && apache2-foreground"
+CMD sh -c "php artisan migrate --seed --force && php artisan optimize:clear && php artisan lighthouse:clear-cache && php artisan cache:clear && apache2-foreground"
