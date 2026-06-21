@@ -4,11 +4,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import { ToastService } from '../../../services/toast/toast.service';
+import { SwitchComponent } from '../../../shared/components/ui/switch/switch.component';
 
 @Component({
   selector: 'app-become-landlord',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, SwitchComponent],
   templateUrl: './become-landlord.component.html',
   styleUrl: './become-landlord.component.css'
 })

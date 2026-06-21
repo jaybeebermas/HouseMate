@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import { ToastService } from '../../../services/toast/toast.service';
+import { SelectComponent } from '../../../shared/components/ui/select/select.component';
+import { AutocompleteComponent } from '../../../shared/components/ui/autocomplete/autocomplete.component';
 
 declare var google: any;
 
@@ -15,7 +17,7 @@ interface UploadedImage {
 @Component({
   selector: 'app-landlord-post',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, SelectComponent, AutocompleteComponent],
   templateUrl: './landlord-post.component.html',
   styleUrl: './landlord-post.component.css'
 })
@@ -38,9 +40,18 @@ export class LandlordPostComponent implements AfterViewInit {
   coverImageName = signal<string | null>(null);
   isDragging = signal(false);
 
+  // Category wrapper configuration
+  categoryOptions = [
+    { name: 'Private Room', value: 'room' },
+    { name: 'Apartment', value: 'apartment' },
+    { name: 'Bedspace', value: 'bedspace' },
+    { name: 'House for Rent', value: 'house' }
+  ];
+
   // Landmark Searchable Dropdown state
   showLandmarks = signal(false);
   landmarkSearchQuery = signal('');
+  autocompleteQuery = signal('');
   
   landmarks = [
     { name: 'UST (University of Santo Tomas), Sampaloc, Manila', lat: 14.6098, lng: 120.9896 },
@@ -61,6 +72,12 @@ export class LandlordPostComponent implements AfterViewInit {
     return this.landmarks.filter(l => l.name.toLowerCase().includes(query));
   });
 
+  filteredLandmarksForAutocomplete = computed(() => {
+    const query = this.autocompleteQuery().toLowerCase().trim();
+    if (!query) return this.landmarks;
+    return this.landmarks.filter(l => l.name.toLowerCase().includes(query));
+  });
+
   // Google Map objects
   private map: any;
   private marker: any;
@@ -73,6 +90,26 @@ export class LandlordPostComponent implements AfterViewInit {
       address: ['', [Validators.required]],
       latitude: [14.5995, [Validators.required]],
       longitude: [120.9842, [Validators.required]]
+    });
+
+    // Automatically update coordinates and center map if address matches a predefined landmark
+    this.postForm.get('address')?.valueChanges.subscribe(val => {
+      if (val) {
+        const match = this.landmarks.find(l => l.name === val);
+        if (match) {
+          this.postForm.patchValue({
+            latitude: match.lat,
+            longitude: match.lng
+          }, { emitEvent: false }); // avoid infinite loops
+          
+          if (this.map && this.marker) {
+            const latLng = { lat: match.lat, lng: match.lng };
+            this.map.setCenter(latLng);
+            this.map.setZoom(16);
+            this.marker.setPosition(latLng);
+          }
+        }
+      }
     });
   }
 
@@ -184,6 +221,10 @@ export class LandlordPostComponent implements AfterViewInit {
       latitude: parseFloat(lat.toFixed(8)),
       longitude: parseFloat(lng.toFixed(8))
     });
+  }
+
+  onAutocompleteQueryChange(query: string): void {
+    this.autocompleteQuery.set(query);
   }
 
   // Address search manual input changes

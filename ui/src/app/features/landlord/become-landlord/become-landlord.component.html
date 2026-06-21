@@ -196,17 +196,12 @@
                 <p>You respect student renter privacy. Random inspections without prior notice of at least 24 hours are not allowed, unless in cases of extreme emergencies or safety threats.</p>
               </div>
 
-              <!-- Checkbox -->
-              <div class="flex items-start gap-3 mt-4">
-                <input 
-                  type="checkbox" 
-                  id="agree" 
+              <!-- Switch toggle -->
+              <div class="mt-4">
+                <app-switch
                   formControlName="agree"
-                  class="mt-1 w-4 h-4 rounded text-[#18305E] focus:ring-[#18305E] border-slate-300 cursor-pointer"
-                />
-                <label for="agree" class="text-sm font-semibold text-slate-600 select-none cursor-pointer leading-snug">
-                  I agree to the landlord terms, code of conduct, and verify that the uploaded ID is valid and belongs to me.
-                </label>
+                  label="I agree to the landlord terms, code of conduct, and verify that the uploaded ID is valid and belongs to me."
+                ></app-switch>
               </div>
               
               <!-- Validation Errors -->
