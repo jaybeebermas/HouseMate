@@ -15,7 +15,12 @@ export const routes: Routes = [
   {
     path: 'become-landlord',
     canActivate: [authGuard],
-    loadComponent: () => import('./features/become-landlord/become-landlord.component').then(m => m.BecomeLandlordComponent)
+    loadComponent: () => import('./features/landlord/become-landlord/become-landlord.component').then(m => m.BecomeLandlordComponent)
+  },
+  {
+    path: 'landlord/post',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/landlord/landlord-post/landlord-post.component').then(m => m.LandlordPostComponent)
   },
   {
     path: 'landing',

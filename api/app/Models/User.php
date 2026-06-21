@@ -38,4 +38,9 @@ class User extends Authenticatable
     {
         return $this->getAllPermissions()->pluck('name')->toArray();
     }
+
+    public function listings(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Listing::class);
+    }
 }

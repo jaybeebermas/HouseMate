@@ -213,6 +213,69 @@ export class AuthService {
     );
   }
 
+  createListing(input: {
+    category: string;
+    price: number;
+    details: string;
+    latitude: number;
+    longitude: number;
+    address: string;
+    images: string[];
+    cover_image: string;
+  }): Observable<any> {
+    const query = `
+      mutation CreateListing(
+        $category: String!,
+        $price: Float!,
+        $details: String!,
+        $latitude: Float!,
+        $longitude: Float!,
+        $address: String!,
+        $images: [String!]!,
+        $coverImage: String!
+      ) {
+        createListing(input: {
+          category: $category,
+          price: $price,
+          details: $details,
+          latitude: $latitude,
+          longitude: $longitude,
+          address: $address,
+          images: $images,
+          cover_image: $coverImage
+        }) {
+          status
+          message
+          listing {
+            id
+            category
+            price
+            details
+            latitude
+            longitude
+            address
+            images
+            cover_image
+          }
+        }
+      }
+    `;
+
+    return this.http.post<any>(this.apiUrl, {
+      query,
+      variables: {
+        category: input.category,
+        price: input.price,
+        details: input.details,
+        latitude: input.latitude,
+        longitude: input.longitude,
+        address: input.address,
+        images: input.images,
+        coverImage: input.cover_image,
+      }
+    });
+  }
+
   logout(autoRedirect: boolean = true): Observable<any> {
     const query = `
       mutation {

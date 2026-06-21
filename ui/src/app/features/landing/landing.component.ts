@@ -20,7 +20,7 @@ export class LandingComponent {
   public readonly showDropdown = signal(false);
 
   onPostRoom(): void {
-    this.toastService.show('The Post Room feature is under development. Get ready to list your co-living spaces soon!', 'info', 'Coming Soon');
+    this.router.navigate(['/landlord/post']);
   }
   public readonly showSearch = signal(typeof localStorage !== 'undefined' ? localStorage.getItem('search_overlay_open') === 'true' : false);
 
