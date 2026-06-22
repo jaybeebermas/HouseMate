@@ -46,7 +46,7 @@ class PermissionSeeder extends Seeder
             );
 
             // Create Landlord Role (no admin permissions by default)
-            $roleModelClass::query()->updateOrCreate(
+            $landlord = $roleModelClass::query()->updateOrCreate(
                 ['name' => 'landlord', 'guard_name' => $guardName],
                 []
             );
@@ -55,6 +55,10 @@ class PermissionSeeder extends Seeder
             $superAdmin->syncPermissions($permissionsList);
             $admin->syncPermissions($permissionsList);
             // Guest role intentionally has NO permissions
+            // Landlord role gets listing permissions
+            $landlord->syncPermissions(
+                array_values(array_filter($permissionsList, fn($p) => str_starts_with($p, 'listing.')))
+            );
         }
 
         $permissionRegistrar = app()->bound('permission.registrar')

@@ -71,5 +71,8 @@ return [
         'events.edit',
         'events.delete',
 
+        // LISTING MODULE
+        'listing.create',
+
     ],
 ];
