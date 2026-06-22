@@ -1,1 +1,12 @@
 myListings: [Listing!]! @field(resolver: "App\\GraphQL\\Queries\\Listing\\ListingQuery@myListings") @guard(with: ["sanctum"])
+listings: [Listing!]! @field(resolver: "App\\GraphQL\\Queries\\Listing\\ListingQuery@listings")
+listing(id: ID! @eq): Listing @find
+paginatedListings(
+  search: String
+  category: String
+  min_price: Float
+  max_price: Float
+  sort_by: String
+  page: Int
+  limit: Int
+): PaginatedListings! @field(resolver: "App\\GraphQL\\Queries\\Listing\\ListingQuery@paginatedListings")

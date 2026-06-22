@@ -13,7 +13,7 @@ import { NgIconComponent } from '@ng-icons/core';
     <div class="flex flex-col md:flex-row gap-4 p-1 items-center">
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="flex-1 w-full">
         <mat-label>{{ placeholder }}</mat-label>
-        <ng-icon name="heroMagnifyingGlass" matPrefix class="ml-5 mr-3 text-zinc-400 text-xl"></ng-icon>
+        <ng-icon name="heroMagnifyingGlass" matPrefix class="ml-5 mr-3 text-[#727272] text-xl"></ng-icon>
         <input
           matInput
           [(ngModel)]="searchTerm"

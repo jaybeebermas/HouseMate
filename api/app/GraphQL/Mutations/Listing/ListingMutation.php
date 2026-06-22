@@ -36,11 +36,11 @@ class ListingMutation
             ];
         }
 
-        // Ensure user is actually a landlord or admin
-        if ($user->role !== 'landlord' && $user->role !== 'admin' && $user->role !== 'super_admin' && $user->role !== 'superadmin') {
+        // Ensure user has listing.create permission
+        if (!$user->can('listing.create')) {
             return [
                 'status' => 'ERROR',
-                'message' => 'Unauthorized. Only registered landlords can post rooms.',
+                'message' => 'Unauthorized. Only approved landlords can post rooms.',
             ];
         }
 
@@ -57,6 +57,8 @@ class ListingMutation
                 'address' => $args['address'],
                 'images' => $args['images'],
                 'cover_image' => $args['cover_image'],
+                'rating' => 5.0,
+                'reviews_count' => 0,
             ]);
 
             DB::commit();

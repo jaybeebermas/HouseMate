@@ -10,8 +10,8 @@ import { AuthService } from '../../../../services/auth/auth.service';
   template: `
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 p-1">
       <div>
-        <h2 class="text-2xl font-black text-zinc-900 tracking-tight">{{ title }}</h2>
-        <p class="text-zinc-500 font-medium mt-1 text-sm">{{ subtitle }}</p>
+        <h2 class="text-2xl font-black text-[#18305E] tracking-tight">{{ title }}</h2>
+        <p class="text-[#485366] font-medium mt-1 text-sm">{{ subtitle }}</p>
       </div>
       <button
         *ngIf="actionLabel && hasActionPermission()"

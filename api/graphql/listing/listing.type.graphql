@@ -9,6 +9,8 @@ type Listing {
   address: String!
   images: [String!]
   cover_image: String
+  rating: Float
+  reviews_count: Int
   created_at: DateTime!
   updated_at: DateTime!
   user: User! @belongsTo
@@ -18,4 +20,10 @@ type CreateListingResponse {
   status: String!
   message: String!
   listing: Listing
+}
+
+type PaginatedListings {
+  data: [Listing!]!
+  total: Int!
+  hasMore: Boolean!
 }

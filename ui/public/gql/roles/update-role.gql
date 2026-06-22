@@ -1,0 +1,8 @@
+mutation updateRole($input: UpdateRoleInput!) {
+  updateRole(input: $input) {
+    id
+    name
+    guard_name
+    users_count
+  }
+}

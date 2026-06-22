@@ -20,6 +20,8 @@ class Listing extends Model
         'address',
         'images',
         'cover_image',
+        'rating',
+        'reviews_count',
     ];
 
     protected $casts = [
@@ -27,7 +29,25 @@ class Listing extends Model
         'price' => 'float',
         'latitude' => 'float',
         'longitude' => 'float',
+        'rating' => 'float',
+        'reviews_count' => 'integer',
     ];
+
+    public function getRatingAttribute(?float $value): float
+    {
+        if (is_null($value)) {
+            return (float) (4.5 + ($this->id % 5) * 0.1);
+        }
+        return (float) $value;
+    }
+
+    public function getReviewsCountAttribute(?int $value): int
+    {
+        if (is_null($value)) {
+            return 5 + ($this->id % 15) * 3;
+        }
+        return (int) $value;
+    }
 
     public function user(): BelongsTo
     {

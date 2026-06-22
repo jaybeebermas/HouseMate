@@ -14,6 +14,7 @@ export interface User {
   permissions?: string[];
   phone_number?: string;
   valid_id?: string;
+  landlord_status?: string;
 }
 
 @Injectable({
@@ -80,6 +81,7 @@ export class AuthService {
             email
             role
             permissions
+            landlord_status
           }
         }
       }
@@ -116,6 +118,7 @@ export class AuthService {
             email
             role
             permissions
+            landlord_status
           }
         }
       }
@@ -158,6 +161,7 @@ export class AuthService {
             email
             role
             permissions
+            landlord_status
           }
         }
       }
@@ -185,7 +189,7 @@ export class AuthService {
         becomeLandlord(input: { phone_number: $phoneNumber, valid_id_name: $validIdName }) {
           status
           message
-          user {
+            user {
             id
             username
             first_name
@@ -195,6 +199,7 @@ export class AuthService {
             permissions
             phone_number
             valid_id
+            landlord_status
           }
         }
       }
@@ -314,13 +319,16 @@ export class AuthService {
       this.currentUser.set(null);
       this.isAuthenticated.set(false);
       const currentPath = this.router.url.split('?')[0];
-      if (
-        currentPath !== '/login' &&
-        currentPath !== '/signup' &&
-        currentPath !== '/landing' &&
-        currentPath !== '/' &&
-        currentPath !== '/showcase'
-      ) {
+      const isPublic = 
+        currentPath === '/login' ||
+        currentPath === '/signup' ||
+        currentPath === '/landing' ||
+        currentPath === '/' ||
+        currentPath === '/showcase' ||
+        currentPath === '/listings' ||
+        currentPath.startsWith('/listings/');
+
+      if (!isPublic) {
         this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
       }
       return;
@@ -356,6 +364,7 @@ export class AuthService {
           email
           role
           permissions
+          landlord_status
         }
       }
     `;
