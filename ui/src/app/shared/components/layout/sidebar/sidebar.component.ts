@@ -18,54 +18,59 @@ type NavNode = Omit<NavigationItem, 'children'> & {
   imports: [CommonModule, RouterLink, RouterLinkActive, NgIconComponent],
   template: `
     <aside
-      class="fixed inset-y-0 left-0 z-50 flex h-full flex-col overflow-hidden border-r border-slate-200 bg-[#F4F6F9] transition-all duration-200 select-none lg:relative lg:z-40 lg:translate-x-0"
+      class="fixed inset-y-0 left-0 z-50 flex h-full flex-col overflow-hidden border-r border-[#2a5298]/30 bg-[#1a3a6b] shadow-xl shadow-[#0a1830]/20 transition-all duration-200 select-none lg:relative lg:z-40 lg:translate-x-0"
       [class.w-64]="isOpen"
       [class.w-0]="!isOpen"
       [class.-translate-x-full]="!isOpen"
       [class.translate-x-0]="isOpen">
 
       <!-- Brand Area -->
-      <div class="px-5 py-6">
+      <div class="px-5 pt-6 pb-4">
         <div class="flex items-center gap-3">
-          <div class="h-10 w-10 rounded flex items-center justify-center overflow-hidden"
-               [ngClass]="configService.logoUrl() ? 'bg-transparent' : 'bg-[#18305E]'">
+          <div class="h-10 w-10 rounded-xl flex items-center justify-center overflow-hidden shadow-lg shadow-[#0a1830]/30"
+               [ngClass]="configService.logoUrl() ? 'bg-transparent' : 'bg-gradient-to-br from-[#b5c9e8] to-[#dce8f7]'">
              <img *ngIf="configService.logoUrl()" [src]="configService.logoUrl()" class="h-full w-full object-cover">
-             <div *ngIf="!configService.logoUrl()" class="h-full w-full bg-[#18305E] flex items-center justify-center text-white font-bold text-sm">HM</div>
+             <div *ngIf="!configService.logoUrl()" class="h-full w-full flex items-center justify-center text-[#112649] font-bold text-sm">HM</div>
           </div>
-          <div class="transition-opacity duration-200" [class.opacity-0]="!isOpen">
-            <h2 class="text-base font-semibold text-[#18305E]">House<span class="text-[#485366]">Sync</span></h2>
-            <p class="text-xs text-[#727272] mt-0.5">{{ getUserRoleName() }}</p>
-          </div>
-        </div>
+           <div class="transition-all duration-200" [class.opacity-0]="!isOpen" [class.opacity-100]="isOpen">
+             <h2 class="text-base font-bold text-[#dce8f7] tracking-tight">House<span class="text-[#7ea3cc] font-medium">Sync</span></h2>
+             <p class="text-[11px] text-[#b5c9e8] font-medium mt-0.5">{{ getUserRoleName() }}</p>
+           </div>
+         </div>
+       </div>
+
+      <!-- Navigation Label -->
+      <div class="px-5 pb-1" [class.opacity-0]="!isOpen">
+        <p class="text-[10px] font-bold text-[#7ea3cc]/60 uppercase tracking-[0.15em]">Menu</p>
       </div>
 
       <!-- Navigation -->
-      <nav class="flex-1 overflow-y-auto overflow-x-hidden px-3 py-2 space-y-0.5">
+      <nav class="flex-1 overflow-y-auto overflow-x-hidden px-3 py-1 space-y-0.5">
         <!-- Dashboard Always Top -->
         <a
           routerLink="/admin/dashboard"
-          routerLinkActive="bg-[#CEEBFF] text-[#18305E] font-semibold"
+          routerLinkActive="bg-[#2a5298] text-white font-medium"
           #rlaDashboard="routerLinkActive"
-          class="flex h-9 items-center gap-3 rounded px-3 text-sm font-medium text-[#485366] hover:bg-[#CEEBFF] transition-colors"
+          class="flex h-9 items-center gap-3 px-3 py-2.5 rounded-md text-[13px] text-[#b5c9e8] hover:bg-[#2a5298]/40 hover:text-[#dce8f7] transition-all"
           [routerLinkActiveOptions]="{exact: true}">
           <ng-icon 
             [name]="rlaDashboard.isActive ? 'heroHomeModernSolid' : 'heroHomeModern'" 
-            class="h-5 w-5 shrink-0"
-            [class.text-[#18305E]]="rlaDashboard.isActive"></ng-icon>
+            class="h-[18px] w-[18px] shrink-0"
+            [class.text-white]="rlaDashboard.isActive"></ng-icon>
           <span class="truncate">Dashboard</span>
         </a>
 
         <!-- User Management -->
         <a
           routerLink="/admin/users"
-          routerLinkActive="bg-[#CEEBFF] text-[#18305E] font-semibold"
+          routerLinkActive="bg-[#2a5298] text-white font-medium"
           #rlaUsers="routerLinkActive"
-          class="flex h-9 items-center gap-3 rounded px-3 text-sm font-medium text-[#485366] hover:bg-[#CEEBFF] transition-colors"
+          class="flex h-9 items-center gap-3 px-3 py-2.5 rounded-md text-[13px] text-[#b5c9e8] hover:bg-[#2a5298]/40 hover:text-[#dce8f7] transition-all"
           [routerLinkActiveOptions]="{exact: true}">
           <ng-icon 
             [name]="rlaUsers.isActive ? 'heroUserGroupSolid' : 'heroUserGroup'" 
-            class="h-5 w-5 shrink-0"
-            [class.text-[#18305E]]="rlaUsers.isActive"></ng-icon>
+            class="h-[18px] w-[18px] shrink-0"
+            [class.text-white]="rlaUsers.isActive"></ng-icon>
           <span class="truncate">User Management</span>
         </a>
 
@@ -75,14 +80,14 @@ type NavNode = Omit<NavigationItem, 'children'> & {
           <a
             *ngIf="section.type === 'item' && isValidRoute(section.route)"
             [routerLink]="section.route"
-            routerLinkActive="bg-[#CEEBFF] text-[#18305E] font-semibold"
+            routerLinkActive="bg-[#2a5298] text-white font-medium"
             #rla="routerLinkActive"
-            class="flex h-9 items-center gap-3 rounded px-3 text-sm font-medium text-[#485366] hover:bg-[#CEEBFF] transition-colors"
+          class="flex h-9 items-center gap-3 px-3 py-2.5 rounded-md text-[13px] text-[#b5c9e8] hover:bg-[#2a5298]/40 hover:text-[#dce8f7] transition-all"
             [routerLinkActiveOptions]="{exact: true}">
             <ng-icon 
               [name]="getIconName(section.icon, rla.isActive)" 
-              class="h-5 w-5 shrink-0"
-              [class.text-[#18305E]]="rla.isActive"></ng-icon>
+              class="h-[18px] w-[18px] shrink-0"
+              [class.text-white]="rla.isActive"></ng-icon>
             <span class="truncate">{{ section.title }}</span>
           </a>
 
@@ -90,43 +95,43 @@ type NavNode = Omit<NavigationItem, 'children'> & {
           <div *ngIf="section.type === 'group' || section.type === 'collapsible'">
             <button
               type="button"
-              class="flex h-9 w-full items-center gap-3 rounded px-3 text-left text-sm font-medium text-[#485366] hover:bg-[#CEEBFF] transition-colors"
+              class="flex h-9 w-full items-center gap-3 px-3 py-2.5 rounded-md text-left text-[13px] text-[#b5c9e8] hover:bg-[#2a5298]/40 hover:text-[#dce8f7] transition-all"
               (click)="toggleSection(section)">
               <ng-icon 
                 [name]="getIconName(section.icon)" 
-                class="h-5 w-5 shrink-0"></ng-icon>
+                class="h-[18px] w-[18px] shrink-0"></ng-icon>
               <span class="truncate flex-1">{{ section.title }}</span>
               <ng-icon 
                 name="heroChevronRight" 
-                class="ml-auto h-4 w-4 shrink-0 transition-transform duration-200 text-[#727272]"
+                class="ml-auto h-3.5 w-3.5 shrink-0 transition-transform duration-200 text-[#7ea3cc]/50"
                 [class.rotate-90]="section._open"></ng-icon>
             </button>
 
             <!-- Children -->
             <div
-              class="overflow-hidden transition-all duration-200 pl-8"
+              class="overflow-hidden transition-all duration-200 pl-10"
               [class.max-h-[500px]]="section._open"
               [class.max-h-0]="!section._open">
               <div *ngFor="let item of section.children">
                 <a
                   *ngIf="item.type === 'item' && (!item.permission || authService.hasPermission(item.permission))"
                   [routerLink]="item.route"
-                  routerLinkActive="bg-[#CEEBFF] text-[#18305E] font-semibold"
+                  routerLinkActive="text-white font-medium"
                   #rlaChild="routerLinkActive"
                   [routerLinkActiveOptions]="{exact: true}"
-                  class="flex h-8 items-center gap-2 rounded px-3 text-sm font-medium text-[#485366] hover:bg-[#CEEBFF] transition-colors">
+                  class="flex h-8 items-center gap-2 px-3 py-2 rounded-md text-[13px] text-[#b5c9e8] hover:bg-[#2a5298]/40 hover:text-[#dce8f7] transition-all">
                   <ng-icon 
                     *ngIf="item.icon"
                     [name]="getIconName(item.icon, rlaChild.isActive)" 
-                    class="h-4 w-4 shrink-0"
-                    [class.text-[#18305E]]="rlaChild.isActive"></ng-icon>
+                    class="h-3.5 w-3.5 shrink-0"
+                    [class.text-white]="rlaChild.isActive"></ng-icon>
                   <span class="truncate">{{ item.title }}</span>
                 </a>
                 
                 <!-- Non-link child -->
                 <div 
                   *ngIf="item.type === 'item' && !isValidRoute(item.route) && (!item.permission || authService.hasPermission(item.permission))"
-                  class="flex h-8 items-center gap-2 px-3 text-sm text-[#727272] cursor-default">
+                  class="flex h-8 items-center gap-2 px-3 py-2 rounded-md text-[13px] text-[#7ea3cc]/50 cursor-default">
                   <span class="truncate">{{ item.title }}</span>
                 </div>
               </div>
@@ -136,32 +141,32 @@ type NavNode = Omit<NavigationItem, 'children'> & {
           <!-- Non-link top-level -->
           <div 
             *ngIf="section.type === 'item' && !isValidRoute(section.route)"
-            class="flex h-9 items-center gap-3 px-3 text-sm text-[#727272] cursor-default">
+            class="flex h-9 items-center gap-3 px-3 py-2.5 rounded-md text-[13px] text-[#7ea3cc]/50 cursor-default">
             <ng-icon 
               [name]="getIconName(section.icon)" 
-              class="h-5 w-5 shrink-0 text-[#727272]"></ng-icon>
+              class="h-[18px] w-[18px] shrink-0 text-[#7ea3cc]/50"></ng-icon>
             <span class="truncate">{{ section.title }}</span>
           </div>
         </div>
       </nav>
       <!-- User Info -->
-      <div class="border-t border-slate-200 px-3 py-3">
+      <div class="border-t border-[#2a5298]/30 px-4 py-4">
         <div class="flex items-center gap-3">
-          <div class="h-8 w-8 rounded bg-[#18305E] flex items-center justify-center text-white font-bold text-xs">
+          <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-[#b5c9e8] to-[#dce8f7] flex items-center justify-center text-[#112649] font-bold text-xs shadow-lg shadow-[#0a1830]/20">
             {{ authService.currentUser()?.first_name?.[0] }}{{ authService.currentUser()?.last_name?.[0] }}
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-[#18305E] truncate">{{ authService.currentUser()?.first_name }} {{ authService.currentUser()?.last_name }}</p>
-            <p class="text-xs text-[#727272] truncate">{{ authService.currentUser()?.email }}</p>
+            <p class="text-sm font-semibold text-[#dce8f7] truncate">{{ authService.currentUser()?.first_name }} {{ authService.currentUser()?.last_name }}</p>
+            <p class="text-[11px] text-[#7ea3cc]/70 truncate">{{ authService.currentUser()?.email }}</p>
           </div>
         </div>
       </div>
       <!-- Sign Out -->
-      <div class="border-t border-slate-200 px-3 py-3">
+      <div class="border-t border-[#2a5298]/30 px-3 pb-3 pt-2">
         <button
           (click)="logout()"
-          class="flex h-9 w-full items-center gap-3 rounded px-3 text-sm font-medium text-[#485366] hover:bg-red-50 hover:text-red-600 transition-colors">
-          <ng-icon name="heroArrowRightOnRectangle" class="h-5 w-5 shrink-0"></ng-icon>
+          class="flex h-9 w-full items-center gap-3 rounded-lg px-3 text-sm font-medium text-[#b5c9e8] hover:bg-red-500/20 hover:text-red-300 transition-all active:scale-[0.98]">
+          <ng-icon name="heroArrowRightOnRectangle" class="h-[18px] w-[18px] shrink-0"></ng-icon>
           <span class="truncate">Sign out</span>
         </button>
       </div>

@@ -35,21 +35,23 @@ import { HasPermissionDirective } from '../../shared/directives/has-permission.d
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatTooltipModule, NgIconComponent, HasPermissionDirective],
   template: `
-    <div class="flex items-center justify-end gap-1.5 transition-all">
-      <button *hasPermission="'user.view'" type="button" class="flex items-center justify-center w-8 h-8 rounded-full text-[#18305E] hover:bg-[#CEEBFF] transition-colors" (click)="view.emit()" matTooltip="View details">
-        <ng-icon name="heroEye" class="text-[17px]"></ng-icon>
+    <div class="flex items-center justify-end gap-1">
+      <button *hasPermission="'user.view'" type="button" class="flex items-center justify-center w-9 h-9 rounded-xl text-[#485366] hover:text-[#18305E] hover:bg-[#CEEBFF]/60 transition-colors duration-150 active:scale-90" (click)="view.emit()" matTooltip="View details">
+        <ng-icon name="heroEye" class="text-[16px]"></ng-icon>
       </button>
-      <button *hasPermission="'user.edit'" type="button" class="flex items-center justify-center w-8 h-8 rounded-full text-pink-600 hover:bg-pink-50 transition-colors" (click)="edit.emit()" matTooltip="Edit user">
-        <ng-icon name="heroPencil" class="text-[17px]"></ng-icon>
+      <button *hasPermission="'user.edit'" type="button" class="flex items-center justify-center w-9 h-9 rounded-xl text-[#485366] hover:text-pink-600 hover:bg-pink-50 transition-colors duration-150 active:scale-90" (click)="edit.emit()" matTooltip="Edit user">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-[16px]">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+        </svg>
       </button>
-      <button *ngIf="status === 'pending'" type="button" class="flex items-center justify-center w-8 h-8 rounded-full text-green-600 hover:bg-green-50 transition-colors" (click)="approve.emit()" matTooltip="Approve Landlord">
-        <ng-icon name="heroCheckCircle" class="text-[17px]"></ng-icon>
+      <button *ngIf="status === 'pending'" type="button" class="flex items-center justify-center w-9 h-9 rounded-xl text-[#485366] hover:text-green-600 hover:bg-green-50 transition-colors duration-150 active:scale-90" (click)="approve.emit()" matTooltip="Approve Landlord">
+        <ng-icon name="heroCheckCircle" class="text-[16px]"></ng-icon>
       </button>
-      <button *ngIf="status === 'pending'" type="button" class="flex items-center justify-center w-8 h-8 rounded-full text-amber-600 hover:bg-amber-50 transition-colors" (click)="reject.emit()" matTooltip="Reject Landlord">
-        <ng-icon name="heroXCircle" class="text-[17px]"></ng-icon>
+      <button *ngIf="status === 'pending'" type="button" class="flex items-center justify-center w-9 h-9 rounded-xl text-[#485366] hover:text-amber-600 hover:bg-amber-50 transition-colors duration-150 active:scale-90" (click)="reject.emit()" matTooltip="Reject Landlord">
+        <ng-icon name="heroXCircle" class="text-[16px]"></ng-icon>
       </button>
-      <button *hasPermission="'user.delete'" type="button" class="flex items-center justify-center w-8 h-8 rounded-full text-red-500 hover:bg-red-50 transition-colors" (click)="delete.emit()" matTooltip="Delete user">
-        <ng-icon name="heroTrash" class="text-[17px]"></ng-icon>
+      <button *hasPermission="'user.delete'" type="button" class="flex items-center justify-center w-9 h-9 rounded-xl text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors duration-150 active:scale-90" (click)="delete.emit()" matTooltip="Delete user">
+        <ng-icon name="heroTrash" class="text-[16px]"></ng-icon>
       </button>
     </div>
   `
@@ -70,53 +72,60 @@ export class UserActionMenuComponent {
   imports: [CommonModule, UserActionMenuComponent, NgIconComponent],
   template: `
     <div class="flex-1 flex flex-col min-h-0">
-      <div class="hidden md:block overflow-x-auto flex-1">
-        <table class="w-full text-left border-collapse">
+      <div class="hidden md:block overflow-x-auto flex-1 -mx-3 sm:-mx-0">
+        <table class="w-full text-left border-collapse min-w-[640px]">
           <thead>
-            <tr class="bg-[#F4F6F9] border-b border-slate-200">
-              <th class="px-8 py-4 text-[10px] font-bold text-[#727272] uppercase tracking-widest">User Profile</th>
-              <th class="px-8 py-4 text-[10px] font-bold text-[#727272] uppercase tracking-widest text-center">System Role</th>
-              <th class="px-8 py-4 text-[10px] font-bold text-[#727272] uppercase tracking-widest text-center">Landlord Status</th>
-              <th class="px-8 py-4 text-[10px] font-bold text-[#727272] uppercase tracking-widest">Email Address</th>
-              <th class="px-8 py-4 text-[10px] font-bold text-[#727272] uppercase tracking-widest text-right">Actions</th>
+            <tr class="bg-slate-50/80 border-b border-slate-200/60">
+              <th class="px-6 py-3.5 text-[10px] font-bold text-[#a1a1aa] uppercase tracking-[0.15em]">User Profile</th>
+              <th class="px-6 py-3.5 text-[10px] font-bold text-[#a1a1aa] uppercase tracking-[0.15em] text-center">System Role</th>
+              <th class="px-6 py-3.5 text-[10px] font-bold text-[#a1a1aa] uppercase tracking-[0.15em] text-center">Landlord Status</th>
+              <th class="px-6 py-3.5 text-[10px] font-bold text-[#a1a1aa] uppercase tracking-[0.15em]">Email Address</th>
+              <th class="px-6 py-3.5 text-[10px] font-bold text-[#a1a1aa] uppercase tracking-[0.15em] text-right">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-200/50">
-            <tr *ngFor="let user of users" class="hover:bg-[#CEEBFF]/30 transition-all group">
-              <td class="px-8 py-4">
-                <div class="flex items-center gap-4">
+          <tbody class="divide-y divide-slate-100/60">
+            <tr *ngFor="let user of users" class="hover:bg-slate-50 transition-colors duration-150 group">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3.5">
+                  <div class="w-9 h-9 rounded-lg bg-[#dce8f7] flex items-center justify-center text-[12px] font-semibold text-[#1a3a6b] flex-shrink-0">
+                    {{ user.first_name?.[0] }}{{ user.last_name?.[0] }}
+                  </div>
                   <div>
-                    <span class="block text-sm font-bold text-[#18305E] leading-none mb-1.5">{{ user.first_name }} {{ user.last_name }}</span>
-                    <span class="text-[11px] text-[#727272] font-semibold tracking-tight">@{{ user.username }}</span>
+                    <span class="block text-sm font-semibold text-[#18305E] leading-none mb-1">{{ user.first_name }} {{ user.last_name }}</span>
+                    <span class="text-[11px] text-[#727272] font-medium">@{{ user.username }}</span>
                   </div>
                 </div>
               </td>
-              <td class="px-8 py-4 text-center">
+              <td class="px-6 py-4 text-center">
                 <span
-                  [class.bg-[#CEEBFF]]="user.role === 'super_admin'"
+                  [class.bg-[#CEEBFF]/70]="user.role === 'super_admin'"
                   [class.text-[#18305E]]="user.role === 'super_admin'"
-                  [class.bg-[#CEEBFF]]="user.role !== 'super_admin'"
+                  [class.bg-[#CEEBFF]/70]="user.role !== 'super_admin'"
                   [class.text-[#18305E]]="user.role !== 'super_admin'"
-                  class="inline-flex px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                  class="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider">
                   {{ formatRoleName(user.role) }}
                 </span>
               </td>
-              <td class="px-8 py-4 text-center">
-                <span *ngIf="user.landlord_status === 'pending'" class="inline-flex px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-amber-100 text-amber-700">
+              <td class="px-6 py-4 text-center">
+                <span *ngIf="user.landlord_status === 'pending'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200/50">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                   Pending
                 </span>
-                <span *ngIf="user.landlord_status === 'approved'" class="inline-flex px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-green-100 text-green-700">
+                <span *ngIf="user.landlord_status === 'approved'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-green-50 text-green-700 border border-green-200/50">
+                  <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
                   Approved
                 </span>
-                <span *ngIf="user.landlord_status === 'rejected'" class="inline-flex px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-red-100 text-red-700">
+                <span *ngIf="user.landlord_status === 'rejected'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-red-50 text-red-700 border border-red-200/50">
+                  <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
                   Rejected
                 </span>
-                <span *ngIf="!user.landlord_status || user.landlord_status === 'none'" class="inline-flex px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-zinc-100 text-zinc-500">
+                <span *ngIf="!user.landlord_status || user.landlord_status === 'none'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-zinc-50 text-zinc-500 border border-zinc-200/50">
+                  <span class="w-1.5 h-1.5 rounded-full bg-zinc-300"></span>
                   None
                 </span>
               </td>
-              <td class="px-8 py-4 text-xs font-medium text-[#485366]">{{ user.email }}</td>
-              <td class="px-8 py-4 text-right whitespace-nowrap">
+              <td class="px-6 py-4 text-sm text-[#485366] font-medium">{{ user.email }}</td>
+              <td class="px-6 py-4 text-right whitespace-nowrap">
                 <app-user-action-menu
                   [status]="user.landlord_status"
                   (view)="view.emit(user)"
@@ -131,16 +140,16 @@ export class UserActionMenuComponent {
         </table>
       </div>
 
-      <div class="md:hidden flex-1 overflow-y-auto p-4 space-y-4 bg-[#F4F6F9]/30">
-        <div *ngFor="let user of users" class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
-          <div class="flex justify-between items-start mb-5">
-            <div class="flex items-center gap-4">
-              <div class="h-11 w-11 rounded-xl bg-[#18305E] flex items-center justify-center text-white font-bold text-sm">
+      <div class="md:hidden flex-1 overflow-y-auto px-2 sm:px-4 py-3 space-y-3">
+        <div *ngFor="let user of users" class="bg-white rounded-xl border border-slate-200/80 p-3 sm:p-4 shadow-sm active:scale-[0.99] transition-transform">
+          <div class="flex justify-between items-start gap-2 mb-3">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#dce8f7] flex items-center justify-center text-[11px] sm:text-[12px] font-semibold text-[#1a3a6b] flex-shrink-0">
                 {{ user.first_name?.[0] }}{{ user.last_name?.[0] }}
               </div>
-              <div>
-                <h4 class="font-bold text-[#18305E] text-sm leading-tight">{{ user.first_name }} {{ user.last_name }}</h4>
-                <p class="text-[11px] text-[#727272] font-bold uppercase tracking-tighter mt-0.5">@{{ user.username }}</p>
+              <div class="min-w-0">
+                <h4 class="font-semibold text-[#18305E] text-sm leading-tight truncate">{{ user.first_name }} {{ user.last_name }}</h4>
+                <p class="text-[11px] text-[#727272] font-medium truncate">@{{ user.username }}</p>
               </div>
             </div>
             <app-user-action-menu
@@ -153,46 +162,56 @@ export class UserActionMenuComponent {
             </app-user-action-menu>
           </div>
 
-          <div class="grid grid-cols-2 gap-4 mb-3">
-            <div class="flex flex-col gap-1">
-              <span class="text-[#727272] font-bold uppercase tracking-widest text-[9px]">Account Role</span>
+          <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3 text-xs">
+            <div class="flex flex-col gap-0.5">
+              <span class="text-[9px] font-bold text-[#a1a1aa] uppercase tracking-wider">Role</span>
               <span
-                [class.bg-[#CEEBFF]]="user.role === 'super_admin'"
+                [class.bg-[#CEEBFF]/70]="user.role === 'super_admin'"
                 [class.text-[#18305E]]="user.role === 'super_admin'"
-                [class.bg-[#CEEBFF]]="user.role !== 'super_admin'"
+                [class.bg-[#CEEBFF]/70]="user.role !== 'super_admin'"
                 [class.text-[#18305E]]="user.role !== 'super_admin'"
-                class="inline-block px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest w-fit">
+                class="inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider w-fit">
                 {{ formatRoleName(user.role) }}
               </span>
             </div>
-            <div class="flex flex-col gap-1">
-              <span class="text-[#727272] font-bold uppercase tracking-widest text-[9px]">Landlord Status</span>
-              <span *ngIf="user.landlord_status === 'pending'" class="inline-block px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-amber-100 text-amber-700 w-fit">Pending</span>
-              <span *ngIf="user.landlord_status === 'approved'" class="inline-block px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-green-100 text-green-700 w-fit">Approved</span>
-              <span *ngIf="user.landlord_status === 'rejected'" class="inline-block px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-red-100 text-red-700 w-fit">Rejected</span>
-              <span *ngIf="!user.landlord_status || user.landlord_status === 'none'" class="inline-block px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-zinc-100 text-zinc-500 w-fit">None</span>
+            <div class="flex flex-col gap-0.5">
+              <span class="text-[9px] font-bold text-[#a1a1aa] uppercase tracking-wider">Status</span>
+              <span *ngIf="user.landlord_status === 'pending'" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200/50 w-fit">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                Pending
+              </span>
+              <span *ngIf="user.landlord_status === 'approved'" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-green-50 text-green-700 border border-green-200/50 w-fit">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                Approved
+              </span>
+              <span *ngIf="user.landlord_status === 'rejected'" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-red-50 text-red-700 border border-red-200/50 w-fit">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                Rejected
+              </span>
+              <span *ngIf="!user.landlord_status || user.landlord_status === 'none'" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-zinc-50 text-zinc-500 border border-zinc-200/50 w-fit">
+                <span class="w-1.5 h-1.5 rounded-full bg-zinc-300"></span>
+                None
+              </span>
             </div>
-          </div>
-          <div class="grid grid-cols-1 gap-4">
-            <div class="flex flex-col gap-1">
-              <span class="text-[#727272] font-bold uppercase tracking-widest text-[9px]">Email Address</span>
-              <span class="text-[#485366] font-bold text-[10px] truncate">{{ user.email }}</span>
+            <div class="col-span-2 sm:col-auto flex flex-col gap-0.5">
+              <span class="text-[9px] font-bold text-[#a1a1aa] uppercase tracking-wider">Email</span>
+              <span class="text-[#485366] font-medium text-[11px] truncate break-all">{{ user.email }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div *ngIf="users.length === 0 && !isLoading" class="p-20 text-center">
-        <div class="inline-flex items-center justify-center p-6 bg-[#F4F6F9] rounded-xl mb-6 shadow-inner">
-          <ng-icon name="heroUsers" class="h-10 w-10 text-[#727272]"></ng-icon>
+      <div *ngIf="users.length === 0 && !isLoading" class="p-16 text-center">
+        <div class="inline-flex items-center justify-center p-5 bg-slate-50 rounded-2xl mb-5">
+          <ng-icon name="heroUsers" class="h-10 w-10 text-[#a1a1aa]"></ng-icon>
         </div>
-        <h3 class="text-[#18305E] text-xl font-black mb-2 tracking-tight">No records found</h3>
-        <p class="text-[#485366] font-medium max-w-sm mx-auto text-base">It looks like there are no results matching your criteria.</p>
+        <h3 class="text-[#18305E] text-lg font-bold mb-1.5 tracking-tight">No records found</h3>
+        <p class="text-[#727272] text-sm">It looks like there are no results matching your criteria.</p>
       </div>
 
-      <div *ngIf="isLoading" class="flex flex-col items-center justify-center p-24 gap-4">
-        <div class="animate-spin h-10 w-10 border-4 border-[#18305E] border-t-transparent rounded-full"></div>
-        <p class="text-xs font-bold text-[#727272] uppercase tracking-widest">Loading Records...</p>
+      <div *ngIf="isLoading" class="flex flex-col items-center justify-center p-20 gap-4">
+        <div class="animate-spin h-9 w-9 border-[3px] border-[#18305E] border-t-transparent rounded-full"></div>
+        <p class="text-[11px] font-bold text-[#a1a1aa] uppercase tracking-widest">Loading Records...</p>
       </div>
       <ng-content select="app-table-pagination"></ng-content>
     </div>

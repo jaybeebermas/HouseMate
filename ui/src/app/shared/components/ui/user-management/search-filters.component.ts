@@ -10,10 +10,10 @@ import { NgIconComponent } from '@ng-icons/core';
   standalone: true,
   imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, NgIconComponent],
   template: `
-    <div class="flex flex-col md:flex-row gap-4 p-1 items-center">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="flex-1 w-full">
+    <div class="flex flex-col md:flex-row gap-4 items-center">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="flex-1 w-full form-field-std search-field">
         <mat-label>{{ placeholder }}</mat-label>
-        <ng-icon name="heroMagnifyingGlass" matPrefix class="ml-5 mr-3 text-[#727272] text-xl"></ng-icon>
+        <ng-icon name="heroMagnifyingGlass" matPrefix class="ml-3 mr-1 text-[#a1a1aa] text-lg"></ng-icon>
         <input
           matInput
           [(ngModel)]="searchTerm"
@@ -24,7 +24,15 @@ import { NgIconComponent } from '@ng-icons/core';
         <ng-content></ng-content>
       </div>
     </div>
-  `
+  `,
+  styles: [`
+    .search-field .mat-mdc-text-field-wrapper { height: 42px !important; }
+    .search-field .mat-mdc-form-field-infix { padding-top: 8px !important; padding-bottom: 8px !important; min-height: unset !important; }
+    .search-field .mdc-notched-outline__leading { border-radius: 10px 0 0 10px !important; }
+    .search-field .mdc-notched-outline__trailing { border-radius: 0 10px 10px 0 !important; }
+    .search-field .mdc-notched-outline__notch { border-right: none; }
+    .search-field .mat-mdc-form-field-subscript-wrapper { display: none !important; }
+  `]
 })
 export class SearchFiltersComponent {
   @Input() placeholder: string = 'Search...';

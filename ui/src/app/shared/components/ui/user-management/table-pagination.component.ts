@@ -7,7 +7,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
   standalone: true,
   imports: [CommonModule, MatPaginatorModule],
   template: `
-    <div class="bg-[#F4F6F9]/50 border-t border-slate-200 rounded-b-2xl px-6">
+    <div class="bg-slate-50/50 border-t border-slate-200/60 rounded-b-2xl px-6">
       <mat-paginator
         [length]="totalItems"
         [pageSize]="pageSize"

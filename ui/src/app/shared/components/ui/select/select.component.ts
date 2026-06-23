@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { Observable, startWith, map } from 'rxjs';
 
 @Component({
@@ -21,7 +22,8 @@ import { Observable, startWith, map } from 'rxjs';
     CommonModule,
     ReactiveFormsModule,
     MatAutocompleteModule,
-    MatInputModule
+    MatInputModule,
+    MatFormFieldModule
   ],
   templateUrl: './select.component.html',
   styleUrl: './select.component.css',

@@ -8,24 +8,22 @@ import { AuthService } from '../../../../services/auth/auth.service';
   standalone: true,
   imports: [CommonModule, NgIconComponent],
   template: `
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 p-1">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
       <div>
-        <h2 class="text-2xl font-black text-[#18305E] tracking-tight">{{ title }}</h2>
-        <p class="text-[#485366] font-medium mt-1 text-sm">{{ subtitle }}</p>
+        <h2 class="text-2xl font-bold text-[#18305E] tracking-tight">{{ title }}</h2>
+        <p class="text-[#727272] mt-1 text-sm">{{ subtitle }}</p>
       </div>
       <button
         *ngIf="actionLabel && hasActionPermission()"
         (click)="actionClick.emit()"
-        class="btn-primary !py-2.5 !px-6 !text-xs shadow-lg shadow-primary-600/10 whitespace-nowrap">
-        <span class="flex items-center gap-2">
-          <ng-container *ngIf="!customIcon; else iconTemplate">
-            <ng-icon name="heroPlus" class="h-4 w-4" strokeWidth="3"></ng-icon>
-          </ng-container>
-          <ng-template #iconTemplate>
-            <span [innerHTML]="customIcon"></span>
-          </ng-template>
-          {{ actionLabel }}
-        </span>
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-br from-[#18305E] to-[#254685] text-white text-sm font-semibold rounded-xl hover:from-[#254685] hover:to-[#18305E] active:scale-[0.97] transition-all shadow-lg shadow-[#18305E]/20 whitespace-nowrap">
+        <ng-container *ngIf="!customIcon; else iconTemplate">
+          <ng-icon name="heroPlus" class="h-4 w-4" strokeWidth="2.5"></ng-icon>
+        </ng-container>
+        <ng-template #iconTemplate>
+          <span [innerHTML]="customIcon"></span>
+        </ng-template>
+        {{ actionLabel }}
       </button>
     </div>
   `
