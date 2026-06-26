@@ -11,7 +11,8 @@
     <app-admin-layout 
       [sidebarOpen]="sidebarOpen()" 
       [navItems]="[]"
-      (toggleSidebar)="toggleSidebar()">
+      (toggleSidebar)="toggleSidebar()"
+      (closeSidebar)="closeSidebar()">
       <app-dashboard></app-dashboard>
     </app-admin-layout>
   </ng-container>
@@ -21,7 +22,8 @@
     <app-admin-layout 
       [sidebarOpen]="sidebarOpen()" 
       [navItems]="navigation()"
-      (toggleSidebar)="toggleSidebar()">
+      (toggleSidebar)="toggleSidebar()"
+      (closeSidebar)="closeSidebar()">
       <router-outlet></router-outlet>
     </app-admin-layout>
   </ng-template>

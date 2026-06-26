@@ -113,6 +113,10 @@ export class App implements OnInit {
     this.sidebarOpen.update(v => !v);
   }
 
+  closeSidebar(): void {
+    this.sidebarOpen.set(false);
+  }
+
   toggleSection(section: NavNode): void {
     section._open = !section._open;
     this.navigation.update(nav => [...nav]);

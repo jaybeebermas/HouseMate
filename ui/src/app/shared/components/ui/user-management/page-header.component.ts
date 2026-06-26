@@ -16,7 +16,7 @@ import { AuthService } from '../../../../services/auth/auth.service';
       <button
         *ngIf="actionLabel && hasActionPermission()"
         (click)="actionClick.emit()"
-        class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-br from-[#18305E] to-[#254685] text-white text-sm font-semibold rounded-xl hover:from-[#254685] hover:to-[#18305E] active:scale-[0.97] transition-all shadow-lg shadow-[#18305E]/20 whitespace-nowrap">
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-br from-[#18305E] to-[#254685] text-white text-sm font-semibold rounded-md hover:from-[#254685] hover:to-[#18305E] active:scale-[0.97] transition-all shadow-lg shadow-[#18305E]/20 whitespace-nowrap">
         <ng-container *ngIf="!customIcon; else iconTemplate">
           <ng-icon name="heroPlus" class="h-4 w-4" strokeWidth="2.5"></ng-icon>
         </ng-container>

@@ -18,11 +18,15 @@ type NavNode = Omit<NavigationItem, 'children'> & {
   imports: [CommonModule, RouterLink, RouterLinkActive, NgIconComponent],
   template: `
     <aside
-      class="fixed inset-y-0 left-0 z-50 flex h-full flex-col overflow-hidden border-r border-[#2a5298]/30 bg-[#1a3a6b] shadow-xl shadow-[#0a1830]/20 transition-all duration-200 select-none lg:relative lg:z-40 lg:translate-x-0"
+      class="flex-col border-r border-[#2a5298]/30 bg-[#1a3a6b] shadow-xl shadow-[#0a1830]/20 select-none transition-all duration-300 overflow-hidden"
       [class.w-64]="isOpen"
       [class.w-0]="!isOpen"
-      [class.-translate-x-full]="!isOpen"
-      [class.translate-x-0]="isOpen">
+      [class.h-full]="true"
+      [class.max-lg:fixed]="true"
+      [class.max-lg:inset-y-0]="true"
+      [class.max-lg:left-0]="true"
+      [class.max-lg:z-50]="true"
+      [class.lg:relative]="true">
 
       <!-- Brand Area -->
       <div class="px-5 pt-6 pb-4">
@@ -49,28 +53,30 @@ type NavNode = Omit<NavigationItem, 'children'> & {
         <!-- Dashboard Always Top -->
         <a
           routerLink="/admin/dashboard"
-          routerLinkActive="bg-[#2a5298] text-white font-medium"
+          routerLinkActive="bg-[#2a5298] text-white font-medium shadow-sm"
           #rlaDashboard="routerLinkActive"
-          class="flex h-9 items-center gap-3 px-3 py-2.5 rounded-md text-[13px] text-[#b5c9e8] hover:bg-[#2a5298]/40 hover:text-[#dce8f7] transition-all"
+          class="relative flex h-9 items-center gap-3 px-3 py-2.5 rounded-md text-[13px] text-[#b5c9e8] hover:bg-[#2a5298]/40 hover:text-[#dce8f7] transition-all"
           [routerLinkActiveOptions]="{exact: true}">
-          <ng-icon 
-            [name]="rlaDashboard.isActive ? 'heroHomeModernSolid' : 'heroHomeModern'" 
-            class="h-[18px] w-[18px] shrink-0"
-            [class.text-white]="rlaDashboard.isActive"></ng-icon>
+          <span *ngIf="rlaDashboard.isActive" class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-white rounded-full"></span>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-[18px] w-[18px] shrink-0"
+               [class.text-white]="rlaDashboard.isActive">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25M9 16.5v.75m3-3v3M15 12v5.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+          </svg>
           <span class="truncate">Dashboard</span>
         </a>
 
         <!-- User Management -->
         <a
           routerLink="/admin/users"
-          routerLinkActive="bg-[#2a5298] text-white font-medium"
+          routerLinkActive="bg-[#2a5298] text-white font-medium shadow-sm"
           #rlaUsers="routerLinkActive"
-          class="flex h-9 items-center gap-3 px-3 py-2.5 rounded-md text-[13px] text-[#b5c9e8] hover:bg-[#2a5298]/40 hover:text-[#dce8f7] transition-all"
+          class="relative flex h-9 items-center gap-3 px-3 py-2.5 rounded-md text-[13px] text-[#b5c9e8] hover:bg-[#2a5298]/40 hover:text-[#dce8f7] transition-all"
           [routerLinkActiveOptions]="{exact: true}">
-          <ng-icon 
-            [name]="rlaUsers.isActive ? 'heroUserGroupSolid' : 'heroUserGroup'" 
-            class="h-[18px] w-[18px] shrink-0"
-            [class.text-white]="rlaUsers.isActive"></ng-icon>
+          <span *ngIf="rlaUsers.isActive" class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-white rounded-full"></span>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-[18px] w-[18px] shrink-0"
+               [class.text-white]="rlaUsers.isActive">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+          </svg>
           <span class="truncate">User Management</span>
         </a>
 
@@ -80,10 +86,11 @@ type NavNode = Omit<NavigationItem, 'children'> & {
           <a
             *ngIf="section.type === 'item' && isValidRoute(section.route)"
             [routerLink]="section.route"
-            routerLinkActive="bg-[#2a5298] text-white font-medium"
+            routerLinkActive="bg-[#2a5298] text-white font-medium shadow-sm"
             #rla="routerLinkActive"
-          class="flex h-9 items-center gap-3 px-3 py-2.5 rounded-md text-[13px] text-[#b5c9e8] hover:bg-[#2a5298]/40 hover:text-[#dce8f7] transition-all"
+            class="relative flex h-9 items-center gap-3 px-3 py-2.5 rounded-md text-[13px] text-[#b5c9e8] hover:bg-[#2a5298]/40 hover:text-[#dce8f7] transition-all"
             [routerLinkActiveOptions]="{exact: true}">
+            <span *ngIf="rla.isActive" class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-white rounded-full"></span>
             <ng-icon 
               [name]="getIconName(section.icon, rla.isActive)" 
               class="h-[18px] w-[18px] shrink-0"
@@ -149,27 +156,6 @@ type NavNode = Omit<NavigationItem, 'children'> & {
           </div>
         </div>
       </nav>
-      <!-- User Info -->
-      <div class="border-t border-[#2a5298]/30 px-4 py-4">
-        <div class="flex items-center gap-3">
-          <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-[#b5c9e8] to-[#dce8f7] flex items-center justify-center text-[#112649] font-bold text-xs shadow-lg shadow-[#0a1830]/20">
-            {{ authService.currentUser()?.first_name?.[0] }}{{ authService.currentUser()?.last_name?.[0] }}
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold text-[#dce8f7] truncate">{{ authService.currentUser()?.first_name }} {{ authService.currentUser()?.last_name }}</p>
-            <p class="text-[11px] text-[#7ea3cc]/70 truncate">{{ authService.currentUser()?.email }}</p>
-          </div>
-        </div>
-      </div>
-      <!-- Sign Out -->
-      <div class="border-t border-[#2a5298]/30 px-3 pb-3 pt-2">
-        <button
-          (click)="logout()"
-          class="flex h-9 w-full items-center gap-3 rounded-lg px-3 text-sm font-medium text-[#b5c9e8] hover:bg-red-500/20 hover:text-red-300 transition-all active:scale-[0.98]">
-          <ng-icon name="heroArrowRightOnRectangle" class="h-[18px] w-[18px] shrink-0"></ng-icon>
-          <span class="truncate">Sign out</span>
-        </button>
-      </div>
     </aside>
   `
 })

@@ -10,21 +10,22 @@ import { CdkScrollable } from '@angular/cdk/scrolling';
   imports: [CommonModule, HeaderComponent, SidebarComponent, CdkScrollable],
   template: `
     <div class="flex h-dvh w-full overflow-hidden bg-gradient-to-br from-slate-50 to-zinc-100 text-[#18305E] relative max-w-full">
-      <!-- Mobile Backdrop — only visible on small screens when sidebar is open -->
+      <!-- Mobile Backdrop — closes sidebar on tap -->
       <div 
         *ngIf="sidebarOpen" 
-        (click)="toggleSidebar.emit()"
+        (click)="closeSidebar.emit()"
         class="fixed inset-0 z-[45] bg-[#18305E]/40 backdrop-blur-sm lg:hidden transition-all duration-300 animate-in fade-in">
       </div>
 
       <app-sidebar 
         [isOpen]="sidebarOpen" 
         [navItems]="navItems"
-        (closeSidebar)="toggleSidebar.emit()"
-        class="h-full shrink-0 max-lg:fixed max-lg:z-50">
+        (closeSidebar)="closeSidebar.emit()">
       </app-sidebar>
 
-      <div class="flex flex-1 flex-col overflow-hidden relative min-w-0 max-w-full">
+      <!-- Main Content Area -->
+      <div class="flex flex-1 flex-col overflow-hidden relative min-w-0 max-w-full transition-all duration-300"
+           [class.lg:ml-0]="true">
         <app-header
           (toggleSidebar)="toggleSidebar.emit()">
         </app-header>
@@ -42,4 +43,5 @@ export class AdminLayoutComponent {
   @Input() sidebarOpen = true;
   @Input() navItems: any[] = [];
   @Output() toggleSidebar = new EventEmitter<void>();
+  @Output() closeSidebar = new EventEmitter<void>();
 }
