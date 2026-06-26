@@ -11,4 +11,5 @@ type User {
     avatar: String
     created_at: String
     updated_at: String
+    landlord_status: String
 }

@@ -1,10 +1,8 @@
-/* User Management Styles */
 :host {
   display: block;
   height: 100%;
 }
 
-/* ── FILTER ROLE SELECT ── */
 .filter-role-select {
   min-width: 160px;
   width: 100%;
@@ -13,7 +11,6 @@
   .filter-role-select { max-width: 200px; }
 }
 
-/* ── MODAL FORM ── */
 .modal-form-card {
   background: rgba(244, 244, 245, 0.4);
   padding: 1.25rem;
@@ -32,7 +29,6 @@
   letter-spacing: 0.2em;
 }
 
-/* ── FORM ROW: 2-col on sm, 1-col on xs ── */
 .form-row {
   display: grid;
   grid-template-columns: 1fr;
@@ -44,19 +40,16 @@
   }
 }
 
-/* ── MAT FIELD RADIUS OVERRIDE ── */
-/* Make Angular Material outline fields less round */
 .form-field-std .mat-mdc-text-field-wrapper {
-  border-radius: 8px !important;
+  border-radius: 10px !important;
 }
 .form-field-std .mdc-notched-outline__leading {
-  border-radius: 8px 0 0 8px !important;
+  border-radius: 10px 0 0 10px !important;
 }
 .form-field-std .mdc-notched-outline__trailing {
-  border-radius: 0 8px 8px 0 !important;
+  border-radius: 0 10px 10px 0 !important;
 }
 
-/* ── ANIMATIONS ── */
 @keyframes scale-in-center {
   0% { transform: scale(0.98); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
@@ -74,5 +67,3 @@
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
-.shadow-inner-lg { box-shadow: inset 0 2px 15px 0 rgb(0 0 0 / 0.05); }

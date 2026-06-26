@@ -307,7 +307,7 @@ class AuthMutation
     {
         // 1. Ensure migrations and seeders have run to add columns and roles
         try {
-            if (!\Illuminate\Support\Facades\Schema::hasColumn('users', 'phone_number')) {
+            if (!\Illuminate\Support\Facades\Schema::hasColumn('users', 'landlord_status')) {
                 \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
                 \Illuminate\Support\Facades\Artisan::call('db:seed', [
                     '--class' => 'Database\\Seeders\\PermissionSeeder',
@@ -329,27 +329,18 @@ class AuthMutation
         DB::beginTransaction();
 
         try {
-            // Update user details
+            // Update user details and set status to pending
             $user->phone_number = $args['phone_number'];
             $user->valid_id = $args['valid_id_name'];
-            $user->role = 'landlord';
+            $user->landlord_status = 'pending';
             $user->save();
 
-            // Assign landlord role (Spatie)
-            $roleModelClass = config('permission.models.role');
-            foreach (['web', 'sanctum'] as $guardName) {
-                $roleModelClass::query()->firstOrCreate(
-                    ['name' => 'landlord', 'guard_name' => $guardName]
-                );
-            }
-            $user->syncRoles(['landlord']);
-
             DB::commit();
-            Log::info('User became a landlord.', ['user_id' => $user->id]);
+            Log::info('User applied to become a landlord.', ['user_id' => $user->id, 'status' => 'pending']);
 
             return [
                 'status' => 'SUCCESS',
-                'message' => 'You are now registered as a landlord.',
+                'message' => 'Your application has been submitted for admin review.',
                 'user' => $user,
             ];
         } catch (\Throwable $e) {

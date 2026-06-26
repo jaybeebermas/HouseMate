@@ -1,0 +1,8 @@
+query roles {
+  roles {
+    id
+    name
+    guard_name
+    users_count
+  }
+}

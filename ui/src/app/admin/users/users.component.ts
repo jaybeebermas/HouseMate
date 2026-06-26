@@ -5,7 +5,7 @@ import { GraphqlService } from '../../services/graphql/graphql.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { ToastService } from '../../services/toast/toast.service';
 import { LoadingService } from '../../services/loading/loading.service';
-import { GET_USERS, CREATE_USER, UPDATE_USER, DELETE_USER } from '../../services/User/user.gql';
+import { GET_USERS, CREATE_USER, UPDATE_USER, DELETE_USER, APPROVE_LANDLORD, REJECT_LANDLORD } from '../../services/User/user.gql';
 import { User } from '../../services/User/user.types';
 import { CreateUserInput, UpdateUserInput } from '../../services/User/user.input';
 import { RoleService, Role } from '../../services/role/role.service';
@@ -35,23 +35,35 @@ import { HasPermissionDirective } from '../../shared/directives/has-permission.d
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatTooltipModule, NgIconComponent, HasPermissionDirective],
   template: `
-    <div class="flex items-center justify-end gap-1.5 transition-all">
-      <button *hasPermission="'user.view'" type="button" class="flex items-center justify-center w-8 h-8 rounded-full text-primary-600 hover:bg-primary-50 transition-colors" (click)="view.emit()" matTooltip="View details">
-        <ng-icon name="heroEye" class="text-[17px]"></ng-icon>
+    <div class="flex items-center justify-end gap-1">
+      <button *hasPermission="'user.view'" type="button" class="flex items-center justify-center w-9 h-9 rounded-xl text-[#485366] hover:text-[#18305E] hover:bg-[#CEEBFF]/60 transition-colors duration-150 active:scale-90" (click)="view.emit()" matTooltip="View details">
+        <ng-icon name="heroEye" class="text-[16px]"></ng-icon>
       </button>
-      <button *hasPermission="'user.edit'" type="button" class="flex items-center justify-center w-8 h-8 rounded-full text-pink-600 hover:bg-pink-50 transition-colors" (click)="edit.emit()" matTooltip="Edit user">
-        <ng-icon name="heroPencil" class="text-[17px]"></ng-icon>
+      <button *hasPermission="'user.edit'" type="button" class="flex items-center justify-center w-9 h-9 rounded-xl text-[#485366] hover:text-pink-600 hover:bg-pink-50 transition-colors duration-150 active:scale-90" (click)="edit.emit()" matTooltip="Edit user">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-[16px]">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+        </svg>
       </button>
-      <button *hasPermission="'user.delete'" type="button" class="flex items-center justify-center w-8 h-8 rounded-full text-red-500 hover:bg-red-50 transition-colors" (click)="delete.emit()" matTooltip="Delete user">
-        <ng-icon name="heroTrash" class="text-[17px]"></ng-icon>
+      <button *ngIf="status === 'pending'" type="button" class="flex items-center justify-center w-9 h-9 rounded-xl text-[#485366] hover:text-green-600 hover:bg-green-50 transition-colors duration-150 active:scale-90" (click)="approve.emit()" matTooltip="Approve Landlord">
+        <ng-icon name="heroCheckCircle" class="text-[16px]"></ng-icon>
+      </button>
+      <button *ngIf="status === 'pending'" type="button" class="flex items-center justify-center w-9 h-9 rounded-xl text-[#485366] hover:text-amber-600 hover:bg-amber-50 transition-colors duration-150 active:scale-90" (click)="reject.emit()" matTooltip="Reject Landlord">
+        <ng-icon name="heroXCircle" class="text-[16px]"></ng-icon>
+      </button>
+      <button *hasPermission="'user.delete'" type="button" class="flex items-center justify-center w-9 h-9 rounded-xl text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors duration-150 active:scale-90" (click)="delete.emit()" matTooltip="Delete user">
+        <ng-icon name="heroTrash" class="text-[16px]"></ng-icon>
       </button>
     </div>
   `
 })
 export class UserActionMenuComponent {
+  @Input() status?: string;
   @Output() view = new EventEmitter<void>();
   @Output() edit = new EventEmitter<void>();
   @Output() delete = new EventEmitter<void>();
+  @Output() approve = new EventEmitter<void>();
+  @Output() reject = new EventEmitter<void>();
+
 }
 
 @Component({
@@ -60,42 +72,67 @@ export class UserActionMenuComponent {
   imports: [CommonModule, UserActionMenuComponent, NgIconComponent],
   template: `
     <div class="flex-1 flex flex-col min-h-0">
-      <div class="hidden md:block overflow-x-auto flex-1">
-        <table class="w-full text-left border-collapse">
+      <div class="hidden md:block overflow-x-auto flex-1 -mx-3 sm:-mx-0">
+        <table class="w-full text-left border-collapse min-w-[640px]">
           <thead>
-            <tr class="bg-zinc-100/50 border-b border-zinc-200/60">
-              <th class="px-8 py-4 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">User Profile</th>
-              <th class="px-8 py-4 text-[10px] font-bold text-zinc-400 uppercase tracking-widest text-center">System Role</th>
-              <th class="px-8 py-4 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Email Address</th>
-              <th class="px-8 py-4 text-[10px] font-bold text-zinc-400 uppercase tracking-widest text-right">Actions</th>
+            <tr class="bg-slate-50/80 border-b border-slate-200/60">
+              <th class="px-6 py-3.5 text-[10px] font-bold text-[#a1a1aa] uppercase tracking-[0.15em]">User Profile</th>
+              <th class="px-6 py-3.5 text-[10px] font-bold text-[#a1a1aa] uppercase tracking-[0.15em] text-center">System Role</th>
+              <th class="px-6 py-3.5 text-[10px] font-bold text-[#a1a1aa] uppercase tracking-[0.15em] text-center">Landlord Status</th>
+              <th class="px-6 py-3.5 text-[10px] font-bold text-[#a1a1aa] uppercase tracking-[0.15em]">Email Address</th>
+              <th class="px-6 py-3.5 text-[10px] font-bold text-[#a1a1aa] uppercase tracking-[0.15em] text-right">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-zinc-100/50">
-            <tr *ngFor="let user of users" class="hover:bg-zinc-100/30 transition-all group">
-              <td class="px-8 py-4">
-                <div class="flex items-center gap-4">
+          <tbody class="divide-y divide-slate-100/60">
+            <tr *ngFor="let user of users" class="hover:bg-slate-50 transition-colors duration-150 group">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3.5">
+                  <div class="w-9 h-9 rounded-lg bg-[#dce8f7] flex items-center justify-center text-[12px] font-semibold text-[#1a3a6b] flex-shrink-0">
+                    {{ user.first_name?.[0] }}{{ user.last_name?.[0] }}
+                  </div>
                   <div>
-                    <span class="block text-sm font-bold text-zinc-900 leading-none mb-1.5">{{ user.first_name }} {{ user.last_name }}</span>
-                    <span class="text-[11px] text-zinc-400 font-semibold tracking-tight">@{{ user.username }}</span>
+                    <span class="block text-sm font-semibold text-[#18305E] leading-none mb-1">{{ user.first_name }} {{ user.last_name }}</span>
+                    <span class="text-[11px] text-[#727272] font-medium">@{{ user.username }}</span>
                   </div>
                 </div>
               </td>
-              <td class="px-8 py-4 text-center">
+              <td class="px-6 py-4 text-center">
                 <span
-                  [class.bg-primary-100]="user.role === 'super_admin'"
-                  [class.text-primary-700]="user.role === 'super_admin'"
-                  [class.bg-zinc-200/50]="user.role !== 'super_admin'"
-                  [class.text-zinc-600]="user.role !== 'super_admin'"
-                  class="inline-flex px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                  [class.bg-[#CEEBFF]/70]="user.role === 'super_admin'"
+                  [class.text-[#18305E]]="user.role === 'super_admin'"
+                  [class.bg-[#CEEBFF]/70]="user.role !== 'super_admin'"
+                  [class.text-[#18305E]]="user.role !== 'super_admin'"
+                  class="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider">
                   {{ formatRoleName(user.role) }}
                 </span>
               </td>
-              <td class="px-8 py-4 text-xs font-medium text-zinc-500">{{ user.email }}</td>
-              <td class="px-8 py-4 text-right whitespace-nowrap">
+              <td class="px-6 py-4 text-center">
+                <span *ngIf="user.landlord_status === 'pending'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200/50">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                  Pending
+                </span>
+                <span *ngIf="user.landlord_status === 'approved'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-green-50 text-green-700 border border-green-200/50">
+                  <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                  Approved
+                </span>
+                <span *ngIf="user.landlord_status === 'rejected'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-red-50 text-red-700 border border-red-200/50">
+                  <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                  Rejected
+                </span>
+                <span *ngIf="!user.landlord_status || user.landlord_status === 'none'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-zinc-50 text-zinc-500 border border-zinc-200/50">
+                  <span class="w-1.5 h-1.5 rounded-full bg-zinc-300"></span>
+                  None
+                </span>
+              </td>
+              <td class="px-6 py-4 text-sm text-[#485366] font-medium">{{ user.email }}</td>
+              <td class="px-6 py-4 text-right whitespace-nowrap">
                 <app-user-action-menu
+                  [status]="user.landlord_status"
                   (view)="view.emit(user)"
                   (edit)="edit.emit(user)"
-                  (delete)="delete.emit(user.id)">
+                  (delete)="delete.emit(user.id)"
+                  (approve)="approve.emit(user.id)"
+                  (reject)="reject.emit(user.id)">
                 </app-user-action-menu>
               </td>
             </tr>
@@ -103,56 +140,78 @@ export class UserActionMenuComponent {
         </table>
       </div>
 
-      <div class="md:hidden flex-1 overflow-y-auto p-4 space-y-4 bg-zinc-50/30">
-        <div *ngFor="let user of users" class="bg-white rounded-2xl border border-zinc-200/60 p-5 shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
-          <div class="flex justify-between items-start mb-5">
-            <div class="flex items-center gap-4">
-              <div class="h-11 w-11 rounded-xl bg-gradient-to-tr from-primary-600 to-teal-400 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary-600/10">
+      <div class="md:hidden flex-1 overflow-y-auto px-2 sm:px-4 py-3 space-y-3">
+        <div *ngFor="let user of users" class="bg-white rounded-xl border border-slate-200/80 p-3 sm:p-4 shadow-sm active:scale-[0.99] transition-transform">
+          <div class="flex justify-between items-start gap-2 mb-3">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#dce8f7] flex items-center justify-center text-[11px] sm:text-[12px] font-semibold text-[#1a3a6b] flex-shrink-0">
                 {{ user.first_name?.[0] }}{{ user.last_name?.[0] }}
               </div>
-              <div>
-                <h4 class="font-bold text-zinc-900 text-sm leading-tight">{{ user.first_name }} {{ user.last_name }}</h4>
-                <p class="text-[11px] text-zinc-400 font-bold uppercase tracking-tighter mt-0.5">@{{ user.username }}</p>
+              <div class="min-w-0">
+                <h4 class="font-semibold text-[#18305E] text-sm leading-tight truncate">{{ user.first_name }} {{ user.last_name }}</h4>
+                <p class="text-[11px] text-[#727272] font-medium truncate">@{{ user.username }}</p>
               </div>
             </div>
             <app-user-action-menu
+              [status]="user.landlord_status"
               (view)="view.emit(user)"
               (edit)="edit.emit(user)"
-              (delete)="delete.emit(user.id)">
+              (delete)="delete.emit(user.id)"
+              (approve)="approve.emit(user.id)"
+              (reject)="reject.emit(user.id)">
             </app-user-action-menu>
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
-            <div class="flex flex-col gap-1">
-              <span class="text-zinc-400 font-bold uppercase tracking-widest text-[9px]">Account Role</span>
+          <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3 text-xs">
+            <div class="flex flex-col gap-0.5">
+              <span class="text-[9px] font-bold text-[#a1a1aa] uppercase tracking-wider">Role</span>
               <span
-                [class.bg-primary-100]="user.role === 'super_admin'"
-                [class.text-primary-700]="user.role === 'super_admin'"
-                [class.bg-zinc-100]="user.role !== 'super_admin'"
-                [class.text-zinc-600]="user.role !== 'super_admin'"
-                class="inline-block px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest w-fit">
+                [class.bg-[#CEEBFF]/70]="user.role === 'super_admin'"
+                [class.text-[#18305E]]="user.role === 'super_admin'"
+                [class.bg-[#CEEBFF]/70]="user.role !== 'super_admin'"
+                [class.text-[#18305E]]="user.role !== 'super_admin'"
+                class="inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider w-fit">
                 {{ formatRoleName(user.role) }}
               </span>
             </div>
-            <div class="flex flex-col gap-1">
-              <span class="text-zinc-400 font-bold uppercase tracking-widest text-[9px]">Email Address</span>
-              <span class="text-zinc-600 font-bold text-[10px] truncate">{{ user.email }}</span>
+            <div class="flex flex-col gap-0.5">
+              <span class="text-[9px] font-bold text-[#a1a1aa] uppercase tracking-wider">Status</span>
+              <span *ngIf="user.landlord_status === 'pending'" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200/50 w-fit">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                Pending
+              </span>
+              <span *ngIf="user.landlord_status === 'approved'" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-green-50 text-green-700 border border-green-200/50 w-fit">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                Approved
+              </span>
+              <span *ngIf="user.landlord_status === 'rejected'" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-red-50 text-red-700 border border-red-200/50 w-fit">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                Rejected
+              </span>
+              <span *ngIf="!user.landlord_status || user.landlord_status === 'none'" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-zinc-50 text-zinc-500 border border-zinc-200/50 w-fit">
+                <span class="w-1.5 h-1.5 rounded-full bg-zinc-300"></span>
+                None
+              </span>
+            </div>
+            <div class="col-span-2 sm:col-auto flex flex-col gap-0.5">
+              <span class="text-[9px] font-bold text-[#a1a1aa] uppercase tracking-wider">Email</span>
+              <span class="text-[#485366] font-medium text-[11px] truncate break-all">{{ user.email }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div *ngIf="users.length === 0 && !isLoading" class="p-20 text-center">
-        <div class="inline-flex items-center justify-center p-6 bg-zinc-100 rounded-xl mb-6 shadow-inner">
-          <ng-icon name="heroUsers" class="h-10 w-10 text-zinc-300"></ng-icon>
+      <div *ngIf="users.length === 0 && !isLoading" class="p-16 text-center">
+        <div class="inline-flex items-center justify-center p-5 bg-slate-50 rounded-2xl mb-5">
+          <ng-icon name="heroUsers" class="h-10 w-10 text-[#a1a1aa]"></ng-icon>
         </div>
-        <h3 class="text-zinc-900 text-xl font-black mb-2 tracking-tight">No records found</h3>
-        <p class="text-zinc-500 font-medium max-w-sm mx-auto text-base">It looks like there are no results matching your criteria.</p>
+        <h3 class="text-[#18305E] text-lg font-bold mb-1.5 tracking-tight">No records found</h3>
+        <p class="text-[#727272] text-sm">It looks like there are no results matching your criteria.</p>
       </div>
 
-      <div *ngIf="isLoading" class="flex flex-col items-center justify-center p-24 gap-4">
-        <div class="animate-spin h-10 w-10 border-4 border-primary-600 border-t-transparent rounded-full shadow-lg shadow-primary-600/10"></div>
-        <p class="text-xs font-bold text-zinc-400 uppercase tracking-widest">Loading Records...</p>
+      <div *ngIf="isLoading" class="flex flex-col items-center justify-center p-20 gap-4">
+        <div class="animate-spin h-9 w-9 border-[3px] border-[#18305E] border-t-transparent rounded-full"></div>
+        <p class="text-[11px] font-bold text-[#a1a1aa] uppercase tracking-widest">Loading Records...</p>
       </div>
       <ng-content select="app-table-pagination"></ng-content>
     </div>
@@ -164,6 +223,8 @@ export class UserTableComponent {
   @Output() view = new EventEmitter<any>();
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<string>();
+  @Output() approve = new EventEmitter<string>();
+  @Output() reject = new EventEmitter<string>();
 
   formatRoleName(name: string): string {
     if (!name) return '';
@@ -180,7 +241,7 @@ import { TablePaginationComponent } from '../../shared/components/ui/user-manage
   selector: 'app-users',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     ReactiveFormsModule,
     FormsModule,
     UserManagementLayoutComponent,
@@ -235,22 +296,23 @@ export class UsersComponent implements OnInit {
 
   selectedRole = signal<string>('');
 
+  private readonly roleDisplayOrder = ['super_admin', 'admin', 'user', 'guest', 'landlord'];
+
   roleFilterOptions = computed(() => {
-    const list = this.roles().map(r => ({
-      name: this.formatRoleName(r.name),
-      value: r.name
-    }));
+    const apiRoles = this.roles().map(r => r.name);
     return [
       { name: 'All Roles', value: '' },
-      ...list
+      ...this.roleDisplayOrder
+        .filter(name => apiRoles.includes(name))
+        .map(name => ({ name: this.formatRoleName(name), value: name }))
     ];
   });
 
   modalRoleOptions = computed(() => {
-    return this.roles().map(r => ({
-      name: this.formatRoleName(r.name),
-      value: r.name
-    }));
+    const apiRoles = this.roles().map(r => r.name);
+    return this.roleDisplayOrder
+      .filter(name => apiRoles.includes(name))
+      .map(name => ({ name: this.formatRoleName(name), value: name }));
   });
 
   filteredUsers = computed(() => {
@@ -263,9 +325,9 @@ export class UsersComponent implements OnInit {
     }
 
     if (!term) return list;
-    return list.filter(u => 
-      u.first_name.toLowerCase().includes(term) || 
-      u.last_name.toLowerCase().includes(term) || 
+    return list.filter(u =>
+      u.first_name.toLowerCase().includes(term) ||
+      u.last_name.toLowerCase().includes(term) ||
       u.username.toLowerCase().includes(term) ||
       u.email.toLowerCase().includes(term)
     );
@@ -273,10 +335,10 @@ export class UsersComponent implements OnInit {
 
   hasChanges(): boolean {
     if (!this.originalUserFormValue) return false;
-    
+
     const current = this.userForm.value;
     const original = this.originalUserFormValue;
-    
+
     for (const key of Object.keys(current)) {
       if ((key === 'password' || key === 'confirm_password') && !current[key]) {
         continue;
@@ -337,6 +399,7 @@ export class UsersComponent implements OnInit {
   async loadRoles(): Promise<void> {
     try {
       const dbRoles = await this.roleService.getAll();
+      console.log('Raw roles from API:', dbRoles);
       this.roles.set(dbRoles || []);
     } catch (error) {
       console.error('Failed to load database roles:', error);
@@ -381,7 +444,7 @@ export class UsersComponent implements OnInit {
     }
     this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
     this.userForm.get('password')?.updateValueAndValidity();
-    
+
     this.modalService.open(this.userModalTemplate, {
       title: 'Add New System User',
       subtitle: 'Personnel Information',
@@ -400,7 +463,7 @@ export class UsersComponent implements OnInit {
     this.userForm.patchValue({ ...user, password: '', confirm_password: '' });
     this.userForm.get('password')?.setValidators([Validators.minLength(8)]);
     this.userForm.get('password')?.updateValueAndValidity();
-    
+
     this.modalService.open(this.userModalTemplate, {
       title: 'Edit System User',
       subtitle: 'Personnel Information',
@@ -484,6 +547,34 @@ export class UsersComponent implements OnInit {
       this.toastService.show('Failed to delete user.', 'error');
     } finally {
       this.modalService.setLoading(false);
+    }
+  }
+
+  async approveLandlord(userId: string): Promise<void> {
+    this.loadingService.show();
+    try {
+      await this.gql.request(APPROVE_LANDLORD, { id: userId });
+      await this.loadUsers();
+      this.toastService.show('Landlord application approved!', 'success');
+    } catch (error) {
+      console.error('Approve failed', error);
+      this.toastService.show('Failed to approve landlord.', 'error');
+    } finally {
+      this.loadingService.hide();
+    }
+  }
+
+  async rejectLandlord(userId: string): Promise<void> {
+    this.loadingService.show();
+    try {
+      await this.gql.request(REJECT_LANDLORD, { id: userId });
+      await this.loadUsers();
+      this.toastService.show('Landlord application rejected.', 'success');
+    } catch (error) {
+      console.error('Reject failed', error);
+      this.toastService.show('Failed to reject landlord.', 'error');
+    } finally {
+      this.loadingService.hide();
     }
   }
 }

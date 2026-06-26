@@ -159,9 +159,9 @@ export class BecomeLandlordComponent {
         const data = res.data?.becomeLandlord;
         if (data && data.status === 'SUCCESS') {
           this.isSubmitted.set(true);
-          this.toastService.show('You are now a registered landlord!', 'success', 'Success');
+          this.toastService.show('Application submitted! Awaiting admin approval.', 'success', 'Submitted');
         } else {
-          this.toastService.show(data?.message || 'Failed to become landlord.', 'error', 'Submission Failed');
+          this.toastService.show(data?.message || 'Failed to submit application.', 'error', 'Submission Failed');
         }
         this.isLoading.set(false);
       },

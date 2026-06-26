@@ -7,6 +7,7 @@ export const GET_USERS = `
       last_name
       email
       role
+      landlord_status
       created_at
       updated_at
     }
@@ -57,5 +58,25 @@ export const UPDATE_USER = `
 export const DELETE_USER = `
   mutation DeleteUser($id: ID!) {
     deleteUser(id: $id)
+  }
+`;
+
+export const APPROVE_LANDLORD = `
+  mutation ApproveLandlord($id: ID!) {
+    approveLandlord(id: $id) {
+      id
+      landlord_status
+      role
+    }
+  }
+`;
+
+export const REJECT_LANDLORD = `
+  mutation RejectLandlord($id: ID!) {
+    rejectLandlord(id: $id) {
+      id
+      landlord_status
+      role
+    }
   }
 `;

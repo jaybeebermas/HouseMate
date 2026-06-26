@@ -1,3 +1,19 @@
+.select-field-std .mat-mdc-text-field-wrapper {
+  border-radius: 10px !important;
+}
+.select-field-std .mdc-notched-outline__leading {
+  border-radius: 10px 0 0 10px !important;
+}
+.select-field-std .mdc-notched-outline__trailing {
+  border-radius: 0 10px 10px 0 !important;
+}
+.select-field-std .mdc-notched-outline__notch {
+  border-right: none;
+}
+.select-field-std .mat-mdc-form-field-subscript-wrapper {
+  display: none !important;
+}
+
 /* Custom slim scrollbars for options scroll */
 .scrollbar-thin::-webkit-scrollbar {
   width: 5px;
@@ -12,14 +28,4 @@
 }
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: #d4d4d8;
-}
-
-/* Select active state visual response */
-.select-item:active {
-  background-color: #f4f4f5;
-}
-
-/* Override overly round input-field radius inside select trigger */
-:host .input-field {
-  border-radius: 8px;
 }
